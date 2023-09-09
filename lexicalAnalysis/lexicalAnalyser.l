@@ -3,13 +3,16 @@
 #include <string.h>
 #include <stdlib.h>
 #define TABLE_SIZE 100000
+#define MAX_SYMBOLS 100000
 
-int locations[TABLE_SIZE];
+char * locations[MAX_SYMBOLS];
 int symTableSize=0;
 
 struct SymbolTableEntry {
     char * name; //identifier
+    char * type;
     int size;
+    struct SymbolTableEntry * next;
 };
 
 struct SymbolTable {
@@ -34,70 +37,51 @@ int hashfunction(char *s) {
 }
 
 // Function to insert a key-value pair into the SymbolTable
-void insert(char* key) {
+void insert(char* key,char * type) {
     int index = hashfunction(key);
 
     // Create a new entry
     struct SymbolTableEntry* new_entry = (struct SymbolTableEntry*)malloc(sizeof(struct SymbolTableEntry));
 
     new_entry->name = strdup(key); // Duplicate the key string
+    new_entry->type = strdup(type); // Duplicate the type string
     new_entry->size = strlen(key); 
+    new_entry->next = Table.symTable[index];
 
     Table.symTable[index] = new_entry;
-    locations[symTableSize++]=index;
+    locations[symTableSize++]=strdup(key);
 }
 
 // Function to Lookup
 struct SymbolTableEntry *  lookup(char* key) {
     int index = hashfunction(key);
     struct SymbolTableEntry* entry = Table.symTable[index];
-    // Search for the key in the linked list at the specified index
-    if (entry!=NULL && strcmp(entry->name, key) == 0) {
-        return entry; 
-    }
-    // Key not found
-    return NULL;
-}
-
-#include <stdbool.h>
-
-bool isKeyword(char* text) {
-    char* keywords[] = {
-        "auto", "break", "case", "char", "const", "continue", "default",
-        "do", "double", "else", "enum", "extern", "float", "for", "goto",
-        "if", "inline", "int", "long", "register", "restrict", "return",
-        "short", "signed", "sizeof", "static", "struct", "switch", "typedef",
-        "union", "unsigned", "void", "volatile", "while"
-    };
-
-    int n = sizeof(keywords) / sizeof(keywords[0]);
-
-    for (int i=0;i<n;i++) {
-        if (strcmp(text,keywords[i]) == 0) {
-            return true; 
+    while(entry != NULL)
+        {
+            if(strcmp(entry->name,key) == 0)
+            {
+                return entry;
+            } 
+            entry = entry->next;
         }
-    }
-    return false; 
+        // Key not found
+        return NULL;
 }
-
 
 %}
 
 %%
 ^"#include"[ ]*<.+\.h> {printf("Header Line\n");}
 
+auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while {printf("Keyword\n");};
+
 [a-zA-z_][a-zA-Z0-9_]* {
     char * buffer = (char*)malloc(strlen(yytext) + 1);
     strcpy(buffer,yytext);
-    if(isKeyword(buffer)){
-        printf("Keyword\n");
-    }
-    else{
-        printf("%s\n",buffer);
-        struct SymbolTableEntry* found= lookup(buffer);
-        if(found==NULL){
-            insert(buffer);
-        }
+    printf("Identifier : %s\n",buffer);
+    struct SymbolTableEntry* found= lookup(buffer);
+    if(found==NULL){
+        insert(buffer,"Identifier");
     }
     free(buffer);
 }
@@ -117,11 +101,12 @@ int main(){
     yyin = fopen("input.txt","r");
     yylex();
     
-    printf("%-20s  %s\n", "Identifier", "Size");
-    printf("--------------------------------------\n");
+    printf("%-20s  %-10s  %-10s\n", "Identifier", "Size", "Type");
+    printf("----------------------------------------------\n");
 
     for (int i = 0; i < symTableSize; i++) {
-        printf("%-20s  %d\n", Table.symTable[locations[i]]->name, Table.symTable[locations[i]]->size);
+        struct SymbolTableEntry * entry = lookup(locations[i]);
+        printf("%-20s  %-10d  %-10s\n", entry->name, entry->size, entry->type);
     }
     fclose(yyin);
     return 0;
