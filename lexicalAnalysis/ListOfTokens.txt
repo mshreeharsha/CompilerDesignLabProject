@@ -6,14 +6,61 @@
             #include<string.h> 	--->	HEADER FILE 	                   2
                            int 	--->	KEYWORD 	                       4
                           main 	--->	IDENTIFIER 	                     4
-                           for 	--->	KEYWORD 	                       5
+                             ( 	--->	PARENTHESIS 	                   5
+                             ) 	--->	PARENTHESIS 	                   5
+                             { 	--->	PARENTHESIS 	                   5
                            int 	--->	KEYWORD 	                       5
-                             i 	--->	IDENTIFIER 	                     5
-                             0 	--->	INTERGER CONSTANT 	             5
-                             i 	--->	IDENTIFIER 	                     5
-                            10 	--->	INTERGER CONSTANT 	             5
-                             i 	--->	IDENTIFIER 	                     5
-                        printf 	--->	IDENTIFIER 	                     6
-                      "Hello!" 	--->	STRING LITERAL 	                 6
-                        return 	--->	KEYWORD 	                       8
-                             1 	--->	INTERGER CONSTANT 	             8
+                             ; 	--->	SEMICOLON 	                     6
+                           int 	--->	KEYWORD 	                       6
+                       integer 	--->	IDENTIFIER 	                     6
+                             = 	--->	ASSIGNMENT OPERATOR 	           7
+                             ; 	--->	SEMICOLON 	                     7
+                           for 	--->	KEYWORD 	                       7
+                             ( 	--->	PARENTHESIS 	                   8
+                           int 	--->	KEYWORD 	                       7
+                             i 	--->	IDENTIFIER 	                     7
+                             = 	--->	ASSIGNMENT OPERATOR 	           8
+                            -1 	--->	INTERGER CONSTANT 	             7
+                             ; 	--->	SEMICOLON 	                     8
+                             i 	--->	IDENTIFIER 	                     7
+                             < 	--->	RELATIONAL OPERATOR 	           8
+                            10 	--->	INTERGER CONSTANT 	             7
+                             ; 	--->	SEMICOLON 	                     8
+                             i 	--->	IDENTIFIER 	                     7
+                            ++ 	--->	UNARY OPERATOR 	                 8
+                             ) 	--->	PARENTHESIS 	                   8
+                             { 	--->	PARENTHESIS 	                   8
+                            if 	--->	KEYWORD 	                       8
+                             ( 	--->	PARENTHESIS 	                   9
+                             i 	--->	IDENTIFIER 	                     8
+                             > 	--->	RELATIONAL OPERATOR 	           9
+                             0 	--->	INTERGER CONSTANT 	             8
+                            || 	--->	LOGICAL OPERATOR 	              9
+                             i 	--->	IDENTIFIER 	                     8
+                            == 	--->	RELATIONAL OPERATOR 	           9
+                             ( 	--->	PARENTHESIS 	                   9
+                             4 	--->	INTERGER CONSTANT 	             8
+                             ^ 	--->	BIT-WISE OPERATOR 	             9
+                             3 	--->	INTERGER CONSTANT 	             8
+                             ) 	--->	PARENTHESIS 	                   9
+                             ) 	--->	PARENTHESIS 	                   9
+                             { 	--->	PARENTHESIS 	                   9
+                        printf 	--->	IDENTIFIER 	                     9
+                             ( 	--->	PARENTHESIS 	                  10
+                     "Hello\n" 	--->	STRING LITERAL 	                 9
+                             ) 	--->	PARENTHESIS 	                  10
+                             ; 	--->	SEMICOLON 	                    10
+                             } 	--->	PARENTHESIS 	                  11
+                          else 	--->	KEYWORD 	                      11
+                             { 	--->	PARENTHESIS 	                  12
+                        printf 	--->	IDENTIFIER 	                    12
+                             ( 	--->	PARENTHESIS 	                  13
+                     "World\n" 	--->	STRING LITERAL 	                12
+                             ) 	--->	PARENTHESIS 	                  13
+                             ; 	--->	SEMICOLON 	                    13
+                             } 	--->	PARENTHESIS 	                  14
+                             } 	--->	PARENTHESIS 	                  15
+                        return 	--->	KEYWORD 	                      15
+                             1 	--->	INTERGER CONSTANT 	            15
+                             ; 	--->	SEMICOLON 	                    16
+                             } 	--->	PARENTHESIS 	                  17
