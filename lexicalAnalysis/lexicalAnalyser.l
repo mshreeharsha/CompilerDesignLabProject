@@ -115,6 +115,11 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
     processToken(yytext, "Identifier", line_num);
     fprintf(yyout, "%30s \t--->\tIDENTIFIER \t%22d\n", yytext, line_num);
 }
+
+[-]?[0-9]+[_\$\#:?][0-9_\$\#:?]* {
+   printf("\n\nERROR : Constant '%s' is invalid\nline no : %d", yytext, line_num);
+}
+
 [a-zA-Z_][a-zA-Z0-9_]{30,} {
     printf("\n\nERROR : Identifier '%s' is too long\nline no : %d", yytext, line_num);
 }
@@ -123,8 +128,13 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
     processToken(yytext,"Integer Constants",line_num);
     fprintf(yyout,"%30s \t--->\tINTERGER CONSTANT \t%14d\n", yytext,line_num);
 }
+
 [-]?([1-9][0-9]{9,}|[2-9][0-9]{9,}|214748364[8-9]) {
     printf("\n\nERROR : Integer Limit Exceed\nline no : %d",line_num);
+}
+
+[0-9]+[a-zA-Z_]+|[a-zA-Z0-9_\$\#:?]+[\$\#:?]*[a-zA-Z0-9_\$\#:?] {
+    printf("\n\nERROR : Identifier '%s' is invalid\nline no : %d", yytext, line_num);
 }
 
 ['].['] {
@@ -136,7 +146,7 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
     fprintf(yyout,"%30s \t--->\tFLOATING-POINT CONSTANT \t%30d\n", yytext,line_num);
 }
 
-["].*["] {
+["][^\n]*["] {
     processToken(yytext,"String Literal",line_num);
     fprintf(yyout,"%30s \t--->\tSTRING LITERAL \t%18d\n", yytext,line_num);
 }
@@ -150,14 +160,18 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 \+|\-|\*|\/|\% {fprintf(yyout,"%30s \t--->\tARITHMETIC OPERATOR \t%12d\n", yytext,line_num+1);}
 
 \+\+|\-\- {fprintf(yyout,"%30s \t--->\tUNARY OPERATOR \t%18d\n", yytext,line_num+1);}
-
-\|\||\&\& {fprintf(yyout,"%30s \t--->\tLOGICAL OPERATOR \t%15d\n", yytext,line_num+1);}
+ 
+\|\||\&\& {fprintf(yyout,"%30s \t--->\tLOGICAL OPERATOR \t%16d\n", yytext,line_num+1);}
 
 \||\&|\^|\! {fprintf(yyout,"%30s \t--->\tBIT-WISE OPERATOR \t%14d\n", yytext,line_num+1);}
 
 ==|<=|>=|!=|<|> {fprintf(yyout,"%30s \t--->\tRELATIONAL OPERATOR \t%12d\n", yytext,line_num+1);}
 
 = {fprintf(yyout,"%30s \t--->\tASSIGNMENT OPERATOR \t%12d\n", yytext,line_num+1);}
+
+\/\/.* {fprintf(yyout,"%30s \t--->\tSINGLELINE COMMENT \t%14d\n",yytext,line_num+1);}
+
+(\/\*)(.|\n)+? {printf("\n\nERROR : Invalid Comment '%s' \nline no : %d", yytext, line_num);}
 
 .|\n ;
 
@@ -191,6 +205,7 @@ int main(){
         }
         printf("]\n");
     }
+    printf("---------------------------------------------------------------\n");
     printf("\n\n");
     fclose(yyin);
     return 0;
