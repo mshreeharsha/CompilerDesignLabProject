@@ -1,3 +1,4 @@
+
 %{
 #include <stdio.h>
 #include <string.h>
@@ -78,10 +79,7 @@ struct SymbolTableEntry *  lookup(char* key) {
     struct SymbolTableEntry* entry = Table.symTable[index];
     while(entry != NULL)
         {
-            if(strcmp(entry->name,key) == 0)
-            {
-                return entry;
-            } 
+            if(strcmp(entry->name,key) == 0)return entry;
             entry = entry->next;
         }
         // Key not found
@@ -105,6 +103,7 @@ void processToken(const char* token,char *category,int linenumber) {
 %}
 
 %%
+
 ^"#include"[ ]*<.+\.h> {fprintf(yyout,"%30s \t--->\tHEADER FILE \t%20d\n", yytext,line_num);}
 
 \n {line_num++;}
@@ -146,7 +145,7 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
     fprintf(yyout,"%30s \t--->\tFLOATING-POINT CONSTANT \t%30d\n", yytext,line_num);
 }
 
-["][^\n]*["] {
+\"[^\n]*\" {
     processToken(yytext,"String Literal",line_num);
     fprintf(yyout,"%30s \t--->\tSTRING LITERAL \t%18d\n", yytext,line_num);
 }
@@ -155,7 +154,7 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 
 [;] {fprintf(yyout,"%30s \t--->\tSEMICOLON \t%22d\n", yytext,line_num+1);}
 
-[,] {fprintf(yyout,"%30s \t--->\tCOMMA \t%28d\n", yytext,line_num+1);}
+[,] {fprintf(yyout,"%30s \t--->\tCOMMA \t%26d\n", yytext,line_num+1);}
 
 \+|\-|\*|\/|\% {fprintf(yyout,"%30s \t--->\tARITHMETIC OPERATOR \t%12d\n", yytext,line_num+1);}
 
@@ -171,10 +170,58 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 
 \/\/.* {fprintf(yyout,"%30s \t--->\tSINGLELINE COMMENT \t%14d\n",yytext,line_num+1);}
 
-(\/\*)(.|\n)+? {printf("\n\nERROR : Invalid Comment '%s' \nline no : %d", yytext, line_num);}
+(\*\/) {printf("\n\nERROR : Invalid Comment -> does not have a valid starting /* '%s' \nline no : %d", yytext, line_num);}
+
+(\/\*)(.|\n)+? {
+    int k  = 2;
+    int err = 0;
+    int found  = 0;
+    while(k<yyleng){
+        if(yytext[k]=='/' && (k+1)<yyleng && yytext[k+1]=='*'){
+            err = 1;
+        }
+        if(yytext[k]=='*' && (k+1)<yyleng && yytext[k+1]=='/'){
+            found = 1;
+            break;
+        }
+        ++k;
+    }
+    if(err == 0 && found==1){
+        int kk  = k;
+        kk+=2;
+        for (int i = 0; i < kk; i++) {
+            if (yytext[i] == '\n') {
+                ++line_num;
+            } else if (yytext[i] != ' ') {
+                int j = i;
+                char temp[100];
+                int temp_index = 0;
+                while (j < kk && yytext[j] != '\n' && yytext[j] != ' ') {
+                    temp[temp_index] = yytext[j];
+                    temp_index++;
+                    j++;
+                }
+                temp[temp_index] = '\0';
+                fprintf(yyout, "%30s \t--->\tMULTILINE COMMENT \t%14d\n", temp, line_num);
+                i = j - 1;
+            }   
+        }
+    }
+    else if(err == 1){
+        printf("\n\nERROR : Invalid Comment -> nested comments are not supported */ '%s' \nline no : %d", yytext, line_num);
+    }
+    else{
+        printf("\n\nERROR : Invalid Comment -> does not end with */ '%s' \nline no : %d", yytext, line_num);
+    }
+    for(int i = yyleng-1;i>k+1;--i){
+            unput(yytext[i]);
+    }
+
+}
+
+["][^"]* {printf("\n\nERROR : String '%s' is invalid\nline no : %d", yytext, line_num);}
 
 .|\n ;
-
 %%
 
 int yywrap(){
@@ -185,14 +232,16 @@ int main(){
     for (int i=0; i<TABLE_SIZE;i++) {
         Table.symTable[i] = NULL;
     }
-    yyin = fopen("input.txt","r");
+    yyin = fopen("inputSix.txt","r");
     yyout=fopen("ListOfTokens.txt","w");
     fprintf(yyout,"\n-------------------------------------------------------------------------------------------------------\n");
-    fprintf(yyout,"%30s \t--->\t %s \t%30s", "Lexeme", "Token","Line Number");
+    fprintf(yyout,"%30s \t--->\t %s \t%30s", "Lexeme", 
+    "Token","Line Number");
     fprintf(yyout,"\n-------------------------------------------------------------------------------------------------------\n");
     yylex();
     printf("\n\nSYMBOL TABLE\n\n");
-    printf("%-15s  %-10s  %-20s  %-20s\n", "Identifier", "Size", "Type", "Line Numbers");
+    printf("%-15s  %-10s  %-20s  %-20s\n", "Identifier", 
+    "Size", "Type", "Line Numbers");
     printf("---------------------------------------------------------------\n");
 
     for (int i = 0; i < symTableSize; i++) {

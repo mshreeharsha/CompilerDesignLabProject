@@ -1,0 +1,10 @@
+#include <stdio.h>
+int main(){
+    int a=10;
+    /* This Code is to 
+    tell you that /* Nested
+    comments in C is Not
+    ALLOWED*/
+    */
+    return 0;
+}

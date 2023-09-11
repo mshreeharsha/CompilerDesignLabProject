@@ -2,92 +2,18 @@
 -------------------------------------------------------------------------------------------------------
                         Lexeme 	--->	 Token 	                   Line Number
 -------------------------------------------------------------------------------------------------------
-             #include<stdio.h> 	--->	HEADER FILE 	                   1
-            #include<string.h> 	--->	HEADER FILE 	                   2
-                           int 	--->	KEYWORD 	                       4
-                          main 	--->	IDENTIFIER 	                     4
-                             ( 	--->	PARENTHESIS 	                   5
-                             ) 	--->	PARENTHESIS 	                   5
-                             { 	--->	PARENTHESIS 	                   5
-                           int 	--->	KEYWORD 	                       5
-                      abc78def 	--->	IDENTIFIER 	                     5
-                             = 	--->	ASSIGNMENT OPERATOR 	           6
-                            10 	--->	INTERGER CONSTANT 	             5
-                             ; 	--->	SEMICOLON 	                     6
-                           int 	--->	KEYWORD 	                       6
+            #include <stdio.h> 	--->	HEADER FILE 	                   1
+                           int 	--->	KEYWORD 	                       2
+                          main 	--->	IDENTIFIER 	                     2
+                             ( 	--->	PARENTHESIS 	                   3
+                             ) 	--->	PARENTHESIS 	                   3
+                             { 	--->	PARENTHESIS 	                   3
+                           int 	--->	KEYWORD 	                       3
+                             a 	--->	IDENTIFIER 	                     3
+                             = 	--->	ASSIGNMENT OPERATOR 	           4
+                            10 	--->	INTERGER CONSTANT 	             3
+                             ; 	--->	SEMICOLON 	                     4
+                        return 	--->	KEYWORD 	                       6
+                             0 	--->	INTERGER CONSTANT 	             6
                              ; 	--->	SEMICOLON 	                     7
-                           int 	--->	KEYWORD 	                       7
-                       integer 	--->	IDENTIFIER 	                     7
-                             = 	--->	ASSIGNMENT OPERATOR 	           8
-                             ; 	--->	SEMICOLON 	                     8
-                           int 	--->	KEYWORD 	                       8
-                             a 	--->	IDENTIFIER 	                     8
-                             = 	--->	ASSIGNMENT OPERATOR 	           9
-                            10 	--->	INTERGER CONSTANT 	             8
-                             ; 	--->	SEMICOLON 	                     9
-                           int 	--->	KEYWORD 	                       9
-                             b 	--->	IDENTIFIER 	                     9
-                             = 	--->	ASSIGNMENT OPERATOR 	          10
-                            20 	--->	INTERGER CONSTANT 	             9
-                             ; 	--->	SEMICOLON 	                    10
-                           int 	--->	KEYWORD 	                      10
-                             c 	--->	IDENTIFIER 	                    10
-                             = 	--->	ASSIGNMENT OPERATOR 	          11
-                             a 	--->	IDENTIFIER 	                    10
-                             * 	--->	ARITHMETIC OPERATOR 	          11
-                             b 	--->	IDENTIFIER 	                    10
-                             ; 	--->	SEMICOLON 	                    11
-                           int 	--->	KEYWORD 	                      11
-                             d 	--->	IDENTIFIER 	                    11
-                             = 	--->	ASSIGNMENT OPERATOR 	          12
-                             ; 	--->	SEMICOLON 	                    12
-      //Defination of For Loop 	--->	SINGLELINE COMMENT 	            13
-                           for 	--->	KEYWORD 	                      13
-                             ( 	--->	PARENTHESIS 	                  14
-                           int 	--->	KEYWORD 	                      13
-                             i 	--->	IDENTIFIER 	                    13
-                             = 	--->	ASSIGNMENT OPERATOR 	          14
-                            -1 	--->	INTERGER CONSTANT 	            13
-                             ; 	--->	SEMICOLON 	                    14
-                             i 	--->	IDENTIFIER 	                    13
-                             < 	--->	RELATIONAL OPERATOR 	          14
-                            10 	--->	INTERGER CONSTANT 	            13
-                             ; 	--->	SEMICOLON 	                    14
-                             i 	--->	IDENTIFIER 	                    13
-                            ++ 	--->	UNARY OPERATOR 	                14
-                             ) 	--->	PARENTHESIS 	                  14
-                             { 	--->	PARENTHESIS 	                  14
-                            if 	--->	KEYWORD 	                      14
-                             ( 	--->	PARENTHESIS 	                  15
-                             i 	--->	IDENTIFIER 	                    14
-                             > 	--->	RELATIONAL OPERATOR 	          15
-                             0 	--->	INTERGER CONSTANT 	            14
-                            || 	--->	LOGICAL OPERATOR 	              15
-                             i 	--->	IDENTIFIER 	                    14
-                            == 	--->	RELATIONAL OPERATOR 	          15
-                             ( 	--->	PARENTHESIS 	                  15
-                             4 	--->	INTERGER CONSTANT 	            14
-                             ^ 	--->	BIT-WISE OPERATOR 	            15
-                             3 	--->	INTERGER CONSTANT 	            14
-                             ) 	--->	PARENTHESIS 	                  15
-                             ) 	--->	PARENTHESIS 	                  15
-                             { 	--->	PARENTHESIS 	                  15
-                        printf 	--->	IDENTIFIER 	                    15
-                             ( 	--->	PARENTHESIS 	                  16
-                     "Hello\n" 	--->	STRING LITERAL 	                15
-                             ) 	--->	PARENTHESIS 	                  16
-                             ; 	--->	SEMICOLON 	                    16
-                             } 	--->	PARENTHESIS 	                  17
-                          else 	--->	KEYWORD 	                      17
-                             { 	--->	PARENTHESIS 	                  18
-                        printf 	--->	IDENTIFIER 	                    18
-                             ( 	--->	PARENTHESIS 	                  19
-                     "World\n" 	--->	STRING LITERAL 	                18
-                             ) 	--->	PARENTHESIS 	                  19
-                             ; 	--->	SEMICOLON 	                    19
-                             } 	--->	PARENTHESIS 	                  20
-                             } 	--->	PARENTHESIS 	                  21
-                        return 	--->	KEYWORD 	                      21
-                             1 	--->	INTERGER CONSTANT 	            21
-                             ; 	--->	SEMICOLON 	                    22
-                             } 	--->	PARENTHESIS 	                  23
+                             } 	--->	PARENTHESIS 	                   8
