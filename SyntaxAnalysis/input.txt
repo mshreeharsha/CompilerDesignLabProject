@@ -3,4 +3,15 @@
 
 int a;
 int b=10;
-int c=5||8,d=2<=8,e;
+int c=5||8,d=2<=8,e;d=;
+
+
+printf("Hello%d",a,b,c);
+printf("Hello%d",a,b,c);
+scanf("%s",&a,b,&c);
+scanf("%s",&a,b,);
+
+int b(int a){
+
+}
+b(5);

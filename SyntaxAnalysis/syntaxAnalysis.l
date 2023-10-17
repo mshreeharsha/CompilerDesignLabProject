@@ -12,11 +12,15 @@ continue {return CONTINUE;}
 for {return FOR;}
 while {return WHILE;}
 int|float|char|double|long|unsigned {return TYPE;}
+void {return VOID;}
 switch {return SWITCH;}
 case {return CASE;}
 struct {return STRUCT;}
 union {return UNION;}
 return {return RETURN;}
+printf {return PRINTF;}
+scanf {return SCANF;}
+main {return MAIN;}
 \#[ \t]*include {return INCLUDE;}
 \<[a-zA-Z]+\.h\> {return PREDEF_HEADER;}
 [a-zA-Z_][a-zA-Z0-9_]{0,30} {return ID;}
