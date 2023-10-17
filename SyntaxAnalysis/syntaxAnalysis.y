@@ -24,22 +24,30 @@
 %left OPEN_BRACK CLOSE_BRACK
 
 %%
-start: header varDec print scanf function_defn function_call {printf("Syntax is Correct\n");}
+start: header startGlobal {printf("Syntax is Correct\n");}
 
-start1: varDec | print | scanf | function_call |
+startGlobal : function_defn | globalVarDec {printf("In Global VarDec\n");} | 
 
-varDec : TYPE ID options D SEMICOLON start1 | ID options D SEMICOLON start1
+globalVarDec : TYPE ID optionsG DG SEMICOLON startGlobal
+               | ID optionsG DG SEMICOLON startGlobal 
+DG : COMMA ID optionsG DG | 
+optionsG : EQUALTO Exp | 
+
+start1: print | scanf | function_call | varDec |
+
+varDec : TYPE ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
+         | ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
 D : COMMA ID options D | 
 options : EQUALTO Exp | 
 
-header: INCLUDE file newHeader
+header: INCLUDE file newHeader {printf("Header is Fine \n");}
 newHeader: header | 
 file : STRING | PREDEF_HEADER 
 
 Exp: OPEN_BRACK Exp CLOSE_BRACK | Exp PLUS Exp | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp | Exp MOD Exp | Exp OR Exp | Exp AND Exp | Exp BIT_XOR Exp | Exp AMPERSAND Exp | Exp UNARY_OP | UNARY_OP Exp | NOT Exp | Exp BIT_OR Exp | Exp ISEQUALTO Exp| Exp LT Exp| Exp LTE Exp| Exp GT Exp| Exp GTE Exp| Exp NE Exp| Exp PLUS_ET Exp| Exp MINUS_ET Exp| Exp MUL_ET Exp| Exp DIV_ET Exp| Exp OR_ET Exp| Exp AND_ET Exp| Exp XOR_ET Exp|ID | INTEGER 
 
-function_defn : function_declaration OPEN_FLOWER start1 CLOSE_FLOWER 
-function_declaration: type ID OPEN_BRACK parameter_list CLOSE_BRACK  
+function_defn : function_declaration OPEN_FLOWER start1 CLOSE_FLOWER startGlobal {printf("Func Def is Fine \n");}
+function_declaration: type ID OPEN_BRACK parameter_list CLOSE_BRACK {printf("In Def\n");} 
                       | type ID OPEN_BRACK CLOSE_BRACK 
 type: TYPE | VOID
 parameter_list: parameter_list COMMA TYPE ID
@@ -49,7 +57,7 @@ function_call : ID OPEN_BRACK params CLOSE_BRACK SEMICOLON start1
 params : item | params COMMA item 
 item : ID | INTEGER | STRING | CHAR_CONST | FLOATING_NUM 
 
-print : PRINTF OPEN_BRACK printExpr CLOSE_BRACK SEMICOLON start1 
+print : PRINTF OPEN_BRACK printExpr CLOSE_BRACK SEMICOLON start1 {printf("here\n");}
 printExpr : STRING 
        | STRING printArguments
 printArguments : COMMA printContent printArguments

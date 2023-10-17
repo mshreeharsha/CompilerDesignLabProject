@@ -31,8 +31,8 @@ main {return MAIN;}
 \"[^\n]*\" {return STRING;}
 ['].['] {return CHAR_CONST;}
 \= {return EQUALTO;}
-\( {return OPEN_BRACK;}
-\) {return CLOSE_BRACK;}
+\( {printf("%s\n",yytext);return OPEN_BRACK;}
+\) {printf("%s\n",yytext);return CLOSE_BRACK;}
 \{ {return OPEN_FLOWER;}
 \} {return CLOSE_FLOWER;}
 \[ {return OPEN_SQ;}
