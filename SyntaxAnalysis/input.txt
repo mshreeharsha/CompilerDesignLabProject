@@ -2,7 +2,7 @@
 #include "y.tab.h"
 
 int a=10;
-void printN(int n){
+void printN(int n,int a[][3][8][7],int ****a){
     printf("The Value of N is : %d",n);
 }
 
@@ -14,5 +14,21 @@ int main(){
     //For Loop
     for(int i=0;i<n;i++){
         printf("Hello World\n");
+    }
+    int a[10][10];
+    int b[10][5]={1,2,36,5};
+    int b[10][5]={1,2,36,{7,},{7,80},90,};
+
+    switch(a){
+        case 'a' : printf("hello");
+        default : printf("World");
+    }
+
+    int * a = d;
+    else if(a>0 && a<2){
+        printf("Between 0 and 2");
+    }
+    else if(a>0 && a<2){
+        printf("Between 0 and 2");
     }
 }

@@ -4,11 +4,13 @@
 %}
 
 %%
-if[ \t]+else {return ELIF;}
+else[ ]+if {return ELIF;}
 if {return IF;}
 else {return ELSE;}
 break {return BREAK;}
 continue {return CONTINUE;}
+default {return DEFAULT;}
+void {return VOID;}
 for {return FOR;}
 while {return WHILE;}
 (int|void)[ ]+main[ ]*\( {return MAIN;}
@@ -64,6 +66,7 @@ scanf {return SCANF;}
 \/\= {return DIV_ET;}
 ; {return SEMICOLON;}
 , {return COMMA;}
+: {return COLON;}
 \n ;
 [ \t]+ ;
 . {return *yytext;}

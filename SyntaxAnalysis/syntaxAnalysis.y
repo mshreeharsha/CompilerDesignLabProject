@@ -3,9 +3,10 @@
     int yylex();
     extern FILE*yyin;
     int yyerror(char const * s);
+    extern char *yytext;
 %}
 
-%token INCLUDE PREDEF_HEADER STRING ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE TYPE SWITCH CASE STRUCT UNION RETURN ID INTEGER FLOATING_NUM SL_COMMENT ML_COMMENT CHAR_CONST EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN FUN_START
+%token INCLUDE PREDEF_HEADER STRING ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE TYPE SWITCH CASE STRUCT UNION RETURN ID INTEGER FLOATING_NUM SL_COMMENT ML_COMMENT CHAR_CONST EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN FUN_START COLON DEFAULT VOID
 
 %right XOR_ET OR_ET AND_ET
 %right PLUS_ET MINUS_ET MUL_ET DIV_ET EQUALTO
@@ -38,7 +39,9 @@ mainParameters : parameter_list |
 
 start1: print | scanf | function_call | varDec | while | for
         | RETURN ExpF SEMICOLON start1 | CONTINUE SEMICOLON start1| BREAK SEMICOLON start1
-        | SL_COMMENT start1 | ML_COMMENT start1 | 
+        | SL_COMMENT start1 | ML_COMMENT start1 | arrayDeclr start1 | arrayInitial start1 
+        | switch | PTR_INITIAL start1 | PTR_DECLR start1 | ifElseLadder start1 |
+
 
 varDec : TYPE ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
          | ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
@@ -56,8 +59,11 @@ Exp: OPEN_BRACK Exp CLOSE_BRACK | Exp PLUS Exp | Exp MINUS Exp | Exp MUL Exp | E
 function_defn : function_declaration OPEN_FLOWER start1 CLOSE_FLOWER startGlobal {printf("Func Def is Fine \n");}
 function_declaration: FUN_START parameter_list CLOSE_BRACK {printf("In Def\n");} 
                       | FUN_START CLOSE_BRACK 
-parameter_list: parameter_list COMMA TYPE ID
-                | TYPE ID 
+parameter_list: parameter_list COMMA TYPE ID choice
+                | parameter_list COMMA pointerAsAParameter
+                | pointerAsAParameter
+                | TYPE ID choice
+choice : arrayAsAParameter | 
 function_call : ID OPEN_BRACK params CLOSE_BRACK SEMICOLON start1 
                 | ID OPEN_BRACK CLOSE_BRACK SEMICOLON start1 
 params : item | params COMMA item 
@@ -94,10 +100,45 @@ scanfContent : ID | arrayElement
 arrayElement : ID dimension
 dimension : OPEN_SQ Exp CLOSE_SQ dimension | OPEN_SQ Exp CLOSE_SQ
 
+arrayDeclr : TYPE ID BOX SEMICOLON
+BOX : BOX OPEN_SQ INTEGER CLOSE_SQ | OPEN_SQ INTEGER CLOSE_SQ
+arrayInitial : TYPE ID BOX EQUALTO OPEN_FLOWER BALANCED_BRACK CLOSE_FLOWER SEMICOLON | TYPE ID BOX EQUALTO OPEN_FLOWER CLOSE_FLOWER SEMICOLON
+BALANCED_BRACK : arrayParams_unend 
+            | arrayParams_unend COMMA
+            | arrayParams_unend COMMA OPEN_FLOWER BALANCED_BRACK CLOSE_FLOWER COMMA BALANCED_BRACK
+            | arrayParams_unend COMMA OPEN_FLOWER BALANCED_BRACK CLOSE_FLOWER COMMA
+            | arrayParams_unend COMMA OPEN_FLOWER BALANCED_BRACK CLOSE_FLOWER     
+            | OPEN_FLOWER BALANCED_BRACK CLOSE_FLOWER
+            | OPEN_FLOWER BALANCED_BRACK CLOSE_FLOWER COMMA 
+            | OPEN_FLOWER BALANCED_BRACK CLOSE_FLOWER COMMA BALANCED_BRACK
+arrayParams_unend : INTEGER | arrayParams_unend COMMA INTEGER 
+
+arrayAsAParameter : OPEN_SQ CLOSE_SQ higherDimention
+higherDimention : BOX | 
+
+pointerAsAParameter : PTR_TYPE PTR_STAR ID
+
+PTR_DECLR : PTR_TYPE PTR_STAR ID SEMICOLON
+PTR_INITIAL : PTR_TYPE PTR_STAR ID EQUALTO AMPERSAND ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO ID SEMICOLON
+PTR_STAR : PTR_STAR MUL | MUL
+PTR_TYPE : STRUCT ID | TYPE | VOID | UNION ID
+
+switch : SWITCH OPEN_BRACK ID CLOSE_BRACK OPEN_FLOWER switchcase default CLOSE_FLOWER start1
+switchcase : CASE comp COLON start1 switchcase | 
+default : DEFAULT COLON start1 | 
+comp : CHAR_CONST | INTEGER
+
+ifElseLadder: S {printf("Valid Syntax\n");}
+S: matched | unmatched 
+matched: IF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif ELSE OPEN_FLOWER start1 CLOSE_FLOWER 
+elif : ELIF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif 
+        | 
+unmatched: IF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif
+
 %%
 
 int yyerror(char const * s){
-    printf("Error in Code\n");
+    printf("Syntax Error\n");
 }
 
 int main(){
