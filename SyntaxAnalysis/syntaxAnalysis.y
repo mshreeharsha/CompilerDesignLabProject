@@ -27,7 +27,7 @@
 %%
 start: header startGlobal main {printf("Syntax is Correct\n");}
 
-startGlobal : function_defn | globalVarDec | structureDefination | structureDeclaration startGlobal | 
+startGlobal : function_defn | globalVarDec | userTypeDefination | userTypeDeclaration startGlobal | 
 
 globalVarDec : TYPE ID optionsG DG SEMICOLON startGlobal {printf("Inside Global Var\n");}
                | ID optionsG DG SEMICOLON startGlobal 
@@ -41,7 +41,7 @@ start1: print | scanf | function_call | varDec | while | for
         | RETURN ExpF SEMICOLON start1 | CONTINUE SEMICOLON start1| BREAK SEMICOLON start1
         | SL_COMMENT start1 | ML_COMMENT start1 | arrayDeclr start1 | arrayInitial start1 
         | switch | PTR_INITIAL start1 | PTR_DECLR start1 | ifElseLadder start1
-        | structureDeclaration start1 | structureInitialization start1 |
+        | userTypeDeclaration start1 | userTypeInitialization start1 |
 
 
 varDec : TYPE ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
@@ -122,7 +122,7 @@ pointerAsAParameter : PTR_TYPE PTR_STAR ID
 PTR_DECLR : PTR_TYPE PTR_STAR ID SEMICOLON
 PTR_INITIAL : PTR_TYPE PTR_STAR ID EQUALTO AMPERSAND ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO PTR_EXP SEMICOLON
 PTR_STAR : PTR_STAR MUL | MUL
-PTR_TYPE : STRUCT ID | TYPE | VOID | UNION ID
+PTR_TYPE : userDefDataType ID | TYPE | VOID 
 PTR_EXP : OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK MALLOC OPEN_BRACK SIZEOF OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK CLOSE_BRACK 
         | OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK MALLOC OPEN_BRACK SIZEOF OPEN_BRACK PTR_TYPE CLOSE_BRACK CLOSE_BRACK
 
@@ -137,18 +137,20 @@ matched: IF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif ELSE
 elif : ELIF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif | 
 unmatched: IF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif
 
-structureDefination : TYPEDEF STRUCT ID OPEN_FLOWER structParams CLOSE_FLOWER structObj SEMICOLON startGlobal | STRUCT ID OPEN_FLOWER structParams CLOSE_FLOWER structObj SEMICOLON startGlobal
-structParams : TYPE ID higherDimention SEMICOLON structParams  
-                | pointerAsAParameter SEMICOLON structParams
-                | STRUCT ID ID SEMICOLON structParams
+userTypeDefination : TYPEDEF userDefDataType ID OPEN_FLOWER userTypeParams CLOSE_FLOWER userTypeObj SEMICOLON startGlobal | userDefDataType ID OPEN_FLOWER userTypeParams CLOSE_FLOWER userTypeObj SEMICOLON startGlobal
+userTypeParams : TYPE ID higherDimention SEMICOLON userTypeParams  
+                | pointerAsAParameter SEMICOLON userTypeParams
+                | userDefDataType ID ID SEMICOLON userTypeParams
                 | TYPE ID higherDimention SEMICOLON
                 | pointerAsAParameter SEMICOLON
-                | STRUCT ID ID SEMICOLON
-structObj : ID | structObj COMMA ID | 
-structureDeclaration : STRUCT ID ID SEMICOLON | ID ID SEMICOLON
-structureInitialization : STRUCT ID ID EQUALTO OPEN_FLOWER params CLOSE_FLOWER SEMICOLON
+                | userDefDataType ID ID SEMICOLON
+userTypeObj : ID | userTypeObj COMMA ID | 
+userTypeDeclaration : userDefDataType ID ID SEMICOLON | ID ID SEMICOLON
+userTypeInitialization : userDefDataType ID ID EQUALTO OPEN_FLOWER params CLOSE_FLOWER SEMICOLON
                         | ID DOT ID EQUALTO item SEMICOLON
                         | ID ARROW ID EQUALTO item SEMICOLON
+
+userDefDataType : STRUCT | UNION 
 
 %%
 
