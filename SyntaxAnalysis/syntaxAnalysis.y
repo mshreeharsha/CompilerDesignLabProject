@@ -5,7 +5,7 @@
     int yyerror(char const * s);
 %}
 
-%token INCLUDE PREDEF_HEADER STRING ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE TYPE SWITCH CASE STRUCT UNION RETURN ID INTEGER FLOATING_NUM SL_COMMENT ML_COMMENT CHAR_CONST EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET VOID PRINTF SCANF MAIN
+%token INCLUDE PREDEF_HEADER STRING ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE TYPE SWITCH CASE STRUCT UNION RETURN ID INTEGER FLOATING_NUM SL_COMMENT ML_COMMENT CHAR_CONST EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN FUN_START
 
 %right XOR_ET OR_ET AND_ET
 %right PLUS_ET MINUS_ET MUL_ET DIV_ET EQUALTO
@@ -24,21 +24,28 @@
 %left OPEN_BRACK CLOSE_BRACK
 
 %%
-start: header startGlobal {printf("Syntax is Correct\n");}
+start: header startGlobal main {printf("Syntax is Correct\n");}
 
 startGlobal : function_defn | globalVarDec {printf("In Global VarDec\n");} | 
 
-globalVarDec : TYPE ID optionsG DG SEMICOLON startGlobal
+globalVarDec : TYPE ID optionsG DG SEMICOLON startGlobal {printf("Inside Global Var\n");}
                | ID optionsG DG SEMICOLON startGlobal 
 DG : COMMA ID optionsG DG | 
 optionsG : EQUALTO Exp | 
 
-start1: print | scanf | function_call | varDec |
+main: MAIN mainParameters CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER {printf("Inside Main\n");}
+mainParameters : parameter_list |
+
+start1: print | scanf | function_call | varDec | while | for
+        | RETURN ExpF SEMICOLON start1 | CONTINUE SEMICOLON start1| BREAK SEMICOLON start1
+        | SL_COMMENT start1 | ML_COMMENT start1 | 
 
 varDec : TYPE ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
          | ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
+         | UNARY_OP Exp SEMICOLON start1
+         | Exp UNARY_OP SEMICOLON start1
 D : COMMA ID options D | 
-options : EQUALTO Exp | 
+options : EQUALTO Exp | EQUALTO ID OPEN_BRACK params CLOSE_BRACK | ID OPEN_BRACK CLOSE_BRACK | 
 
 header: INCLUDE file newHeader {printf("Header is Fine \n");}
 newHeader: header | 
@@ -47,9 +54,8 @@ file : STRING | PREDEF_HEADER
 Exp: OPEN_BRACK Exp CLOSE_BRACK | Exp PLUS Exp | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp | Exp MOD Exp | Exp OR Exp | Exp AND Exp | Exp BIT_XOR Exp | Exp AMPERSAND Exp | Exp UNARY_OP | UNARY_OP Exp | NOT Exp | Exp BIT_OR Exp | Exp ISEQUALTO Exp| Exp LT Exp| Exp LTE Exp| Exp GT Exp| Exp GTE Exp| Exp NE Exp| Exp PLUS_ET Exp| Exp MINUS_ET Exp| Exp MUL_ET Exp| Exp DIV_ET Exp| Exp OR_ET Exp| Exp AND_ET Exp| Exp XOR_ET Exp|ID | INTEGER 
 
 function_defn : function_declaration OPEN_FLOWER start1 CLOSE_FLOWER startGlobal {printf("Func Def is Fine \n");}
-function_declaration: type ID OPEN_BRACK parameter_list CLOSE_BRACK {printf("In Def\n");} 
-                      | type ID OPEN_BRACK CLOSE_BRACK 
-type: TYPE | VOID
+function_declaration: FUN_START parameter_list CLOSE_BRACK {printf("In Def\n");} 
+                      | FUN_START CLOSE_BRACK 
 parameter_list: parameter_list COMMA TYPE ID
                 | TYPE ID 
 function_call : ID OPEN_BRACK params CLOSE_BRACK SEMICOLON start1 
@@ -57,7 +63,20 @@ function_call : ID OPEN_BRACK params CLOSE_BRACK SEMICOLON start1
 params : item | params COMMA item 
 item : ID | INTEGER | STRING | CHAR_CONST | FLOATING_NUM 
 
-print : PRINTF OPEN_BRACK printExpr CLOSE_BRACK SEMICOLON start1 {printf("here\n");}
+for : FOR OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER start1
+        | FOR OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK SEMICOLON start1 
+        | FOR OPEN_BRACK SEMICOLON ExpF SEMICOLON ExpF CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER start1
+        | FOR OPEN_BRACK SEMICOLON ExpF SEMICOLON ExpF CLOSE_BRACK SEMICOLON start1 
+
+while : WHILE OPEN_BRACK ExpF CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER start1
+        | WHILE OPEN_BRACK ExpF CLOSE_BRACK SEMICOLON start1
+
+varDecF : TYPE ID options D SEMICOLON {printf("varDecF is Fine\n");}
+         | ID options D SEMICOLON {printf("varDecF is Fine\n");}
+
+ExpF : Exp | 
+
+print : PRINTF OPEN_BRACK printExpr CLOSE_BRACK SEMICOLON start1 
 printExpr : STRING 
        | STRING printArguments
 printArguments : COMMA printContent printArguments

@@ -1,4 +1,18 @@
 #include <stdio.h>  
 #include "y.tab.h"
 
-int a(){}
+int a=10;
+void printN(int n){
+    printf("The Value of N is : %d",n);
+}
+
+int main(){
+    a=15;
+    int b=10;
+    b++;
+    int d=printN(b);
+    //For Loop
+    for(int i=0;i<n;i++){
+        printf("Hello World\n");
+    }
+}

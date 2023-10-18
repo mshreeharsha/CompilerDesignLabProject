@@ -11,8 +11,9 @@ break {return BREAK;}
 continue {return CONTINUE;}
 for {return FOR;}
 while {return WHILE;}
+(int|void)[ ]+main[ ]*\( {return MAIN;}
+(int|float|char|double|long|unsigned|void)[ ]+[a-zA-Z_][a-zA-Z0-9_]{0,30}[ ]*\( {return FUN_START;}
 int|float|char|double|long|unsigned {return TYPE;}
-void {return VOID;}
 switch {return SWITCH;}
 case {return CASE;}
 struct {return STRUCT;}
@@ -20,7 +21,6 @@ union {return UNION;}
 return {return RETURN;}
 printf {return PRINTF;}
 scanf {return SCANF;}
-main {return MAIN;}
 \#[ \t]*include {return INCLUDE;}
 \<[a-zA-Z]+\.h\> {return PREDEF_HEADER;}
 [a-zA-Z_][a-zA-Z0-9_]{0,30} {return ID;}
@@ -31,8 +31,8 @@ main {return MAIN;}
 \"[^\n]*\" {return STRING;}
 ['].['] {return CHAR_CONST;}
 \= {return EQUALTO;}
-\( {printf("%s\n",yytext);return OPEN_BRACK;}
-\) {printf("%s\n",yytext);return CLOSE_BRACK;}
+\( {return OPEN_BRACK;}
+\) {return CLOSE_BRACK;}
 \{ {return OPEN_FLOWER;}
 \} {return CLOSE_FLOWER;}
 \[ {return OPEN_SQ;}
