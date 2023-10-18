@@ -4,6 +4,9 @@
 %}
 
 %%
+malloc {return MALLOC;}
+sizeof {return SIZEOF;}
+typedef {return TYPEDEF;}
 else[ ]+if {return ELIF;}
 if {return IF;}
 else {return ELSE;}
@@ -32,6 +35,8 @@ scanf {return SCANF;}
 \/\*[^*/]*\*\/ {return ML_COMMENT;}
 \"[^\n]*\" {return STRING;}
 ['].['] {return CHAR_CONST;}
+\-\> {printf("ARROW\n");return ARROW;}
+\. {return DOT;}
 \= {return EQUALTO;}
 \( {return OPEN_BRACK;}
 \) {return CLOSE_BRACK;}

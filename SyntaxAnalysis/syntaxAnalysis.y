@@ -6,7 +6,7 @@
     extern char *yytext;
 %}
 
-%token INCLUDE PREDEF_HEADER STRING ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE TYPE SWITCH CASE STRUCT UNION RETURN ID INTEGER FLOATING_NUM SL_COMMENT ML_COMMENT CHAR_CONST EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN FUN_START COLON DEFAULT VOID
+%token INCLUDE PREDEF_HEADER STRING ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE TYPE SWITCH CASE STRUCT UNION RETURN ID INTEGER FLOATING_NUM SL_COMMENT ML_COMMENT CHAR_CONST EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN FUN_START COLON DEFAULT VOID MALLOC SIZEOF TYPEDEF DOT ARROW
 
 %right XOR_ET OR_ET AND_ET
 %right PLUS_ET MINUS_ET MUL_ET DIV_ET EQUALTO
@@ -27,7 +27,7 @@
 %%
 start: header startGlobal main {printf("Syntax is Correct\n");}
 
-startGlobal : function_defn | globalVarDec {printf("In Global VarDec\n");} | 
+startGlobal : function_defn | globalVarDec | structureDefination | structureDeclaration startGlobal | 
 
 globalVarDec : TYPE ID optionsG DG SEMICOLON startGlobal {printf("Inside Global Var\n");}
                | ID optionsG DG SEMICOLON startGlobal 
@@ -40,7 +40,8 @@ mainParameters : parameter_list |
 start1: print | scanf | function_call | varDec | while | for
         | RETURN ExpF SEMICOLON start1 | CONTINUE SEMICOLON start1| BREAK SEMICOLON start1
         | SL_COMMENT start1 | ML_COMMENT start1 | arrayDeclr start1 | arrayInitial start1 
-        | switch | PTR_INITIAL start1 | PTR_DECLR start1 | ifElseLadder start1 |
+        | switch | PTR_INITIAL start1 | PTR_DECLR start1 | ifElseLadder start1
+        | structureDeclaration start1 | structureInitialization start1 |
 
 
 varDec : TYPE ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
@@ -119,9 +120,11 @@ higherDimention : BOX |
 pointerAsAParameter : PTR_TYPE PTR_STAR ID
 
 PTR_DECLR : PTR_TYPE PTR_STAR ID SEMICOLON
-PTR_INITIAL : PTR_TYPE PTR_STAR ID EQUALTO AMPERSAND ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO ID SEMICOLON
+PTR_INITIAL : PTR_TYPE PTR_STAR ID EQUALTO AMPERSAND ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO PTR_EXP SEMICOLON
 PTR_STAR : PTR_STAR MUL | MUL
 PTR_TYPE : STRUCT ID | TYPE | VOID | UNION ID
+PTR_EXP : OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK MALLOC OPEN_BRACK SIZEOF OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK CLOSE_BRACK 
+        | OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK MALLOC OPEN_BRACK SIZEOF OPEN_BRACK PTR_TYPE CLOSE_BRACK CLOSE_BRACK
 
 switch : SWITCH OPEN_BRACK ID CLOSE_BRACK OPEN_FLOWER switchcase default CLOSE_FLOWER start1
 switchcase : CASE comp COLON start1 switchcase | 
@@ -131,9 +134,21 @@ comp : CHAR_CONST | INTEGER
 ifElseLadder: S {printf("Valid Syntax\n");}
 S: matched | unmatched 
 matched: IF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif ELSE OPEN_FLOWER start1 CLOSE_FLOWER 
-elif : ELIF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif 
-        | 
+elif : ELIF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif | 
 unmatched: IF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif
+
+structureDefination : TYPEDEF STRUCT ID OPEN_FLOWER structParams CLOSE_FLOWER structObj SEMICOLON startGlobal | STRUCT ID OPEN_FLOWER structParams CLOSE_FLOWER structObj SEMICOLON startGlobal
+structParams : TYPE ID higherDimention SEMICOLON structParams  
+                | pointerAsAParameter SEMICOLON structParams
+                | STRUCT ID ID SEMICOLON structParams
+                | TYPE ID higherDimention SEMICOLON
+                | pointerAsAParameter SEMICOLON
+                | STRUCT ID ID SEMICOLON
+structObj : ID | structObj COMMA ID | 
+structureDeclaration : STRUCT ID ID SEMICOLON | ID ID SEMICOLON
+structureInitialization : STRUCT ID ID EQUALTO OPEN_FLOWER params CLOSE_FLOWER SEMICOLON
+                        | ID DOT ID EQUALTO item SEMICOLON
+                        | ID ARROW ID EQUALTO item SEMICOLON
 
 %%
 
