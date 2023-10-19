@@ -29,12 +29,12 @@ start: header startGlobal main {printf("Syntax is Correct\n");}
 
 startGlobal : function_defn | globalVarDec | userTypeDefination | userTypeDeclaration startGlobal | 
 
-globalVarDec : TYPE ID optionsG DG SEMICOLON startGlobal {printf("Inside Global Var\n");}
+globalVarDec : TYPE ID optionsG DG SEMICOLON startGlobal 
                | ID optionsG DG SEMICOLON startGlobal 
 DG : COMMA ID optionsG DG | 
 optionsG : EQUALTO Exp | 
 
-main: MAIN mainParameters CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER {printf("Inside Main\n");}
+main: MAIN mainParameters CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER 
 mainParameters : parameter_list |
 
 start1: print | scanf | function_call | varDec | while | for
@@ -44,21 +44,21 @@ start1: print | scanf | function_call | varDec | while | for
         | userTypeDeclaration start1 | userTypeInitialization start1 |
 
 
-varDec : TYPE ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
-         | ID options D SEMICOLON start1 {printf("varDec is Fine\n");}
+varDec : TYPE ID options D SEMICOLON start1 
+         | ID options D SEMICOLON start1 
          | UNARY_OP Exp SEMICOLON start1
          | Exp UNARY_OP SEMICOLON start1
 D : COMMA ID options D | 
 options : EQUALTO Exp | EQUALTO ID OPEN_BRACK params CLOSE_BRACK | ID OPEN_BRACK CLOSE_BRACK | 
 
-header: INCLUDE file newHeader {printf("Header is Fine \n");}
+header: INCLUDE file newHeader 
 newHeader: header | 
 file : STRING | PREDEF_HEADER 
 
 Exp: OPEN_BRACK Exp CLOSE_BRACK | Exp PLUS Exp | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp | Exp MOD Exp | Exp OR Exp | Exp AND Exp | Exp BIT_XOR Exp | Exp AMPERSAND Exp | Exp UNARY_OP | UNARY_OP Exp | NOT Exp | Exp BIT_OR Exp | Exp ISEQUALTO Exp| Exp LT Exp| Exp LTE Exp| Exp GT Exp| Exp GTE Exp| Exp NE Exp| Exp PLUS_ET Exp| Exp MINUS_ET Exp| Exp MUL_ET Exp| Exp DIV_ET Exp| Exp OR_ET Exp| Exp AND_ET Exp| Exp XOR_ET Exp|ID | INTEGER 
 
-function_defn : function_declaration OPEN_FLOWER start1 CLOSE_FLOWER startGlobal {printf("Func Def is Fine \n");}
-function_declaration: FUN_START parameter_list CLOSE_BRACK {printf("In Def\n");} 
+function_defn : function_declaration OPEN_FLOWER start1 CLOSE_FLOWER startGlobal 
+function_declaration: FUN_START parameter_list CLOSE_BRACK 
                       | FUN_START CLOSE_BRACK 
 parameter_list: parameter_list COMMA TYPE ID choice
                 | parameter_list COMMA pointerAsAParameter
@@ -78,8 +78,8 @@ for : FOR OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK OPEN_FLOWER start1 
 while : WHILE OPEN_BRACK ExpF CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER start1
         | WHILE OPEN_BRACK ExpF CLOSE_BRACK SEMICOLON start1
 
-varDecF : TYPE ID options D SEMICOLON {printf("varDecF is Fine\n");}
-         | ID options D SEMICOLON {printf("varDecF is Fine\n");}
+varDecF : TYPE ID options D SEMICOLON 
+         | ID options D SEMICOLON 
 
 ExpF : Exp | 
 
@@ -131,7 +131,7 @@ switchcase : CASE comp COLON start1 switchcase |
 default : DEFAULT COLON start1 | 
 comp : CHAR_CONST | INTEGER
 
-ifElseLadder: S {printf("Valid Syntax\n");}
+ifElseLadder: S 
 S: matched | unmatched 
 matched: IF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif ELSE OPEN_FLOWER start1 CLOSE_FLOWER 
 elif : ELIF OPEN_BRACK Exp CLOSE_BRACK OPEN_FLOWER start1 CLOSE_FLOWER elif | 
@@ -155,11 +155,12 @@ userDefDataType : STRUCT | UNION
 %%
 
 int yyerror(char const * s){
-    printf("Syntax Error\n");
+    extern int yylinenumber;
+    printf("Syntax Error\n Line No : %d\n",yylinenumber);
 }
 
 int main(){
-    yyin=fopen("input.txt","r");
+    yyin=fopen("input3.txt","r");
     yyparse();
     fclose(yyin);
 }

@@ -1,6 +1,7 @@
 %{
     #include <stdio.h>
     #include "y.tab.h"
+    int yylinenumber=1;
 %}
 
 %%
@@ -35,7 +36,7 @@ scanf {return SCANF;}
 \/\*[^*/]*\*\/ {return ML_COMMENT;}
 \"[^\n]*\" {return STRING;}
 ['].['] {return CHAR_CONST;}
-\-\> {printf("ARROW\n");return ARROW;}
+\-\> {return ARROW;}
 \. {return DOT;}
 \= {return EQUALTO;}
 \( {return OPEN_BRACK;}
@@ -72,7 +73,7 @@ scanf {return SCANF;}
 ; {return SEMICOLON;}
 , {return COMMA;}
 : {return COLON;}
-\n ;
+\n {++yylinenumber;};
 [ \t]+ ;
 . {return *yytext;}
 %%

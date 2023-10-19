@@ -1,0 +1,11 @@
+#include <stdio.h>  
+
+int main(){
+
+    //scanf and printf
+
+    printf("Hello World");
+    printf("%d %d %d",a,b,c,d);
+    scanf("%s",&a,&b,&c);
+    scanf(&a,b,c);
+}

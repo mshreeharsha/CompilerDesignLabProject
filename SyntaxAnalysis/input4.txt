@@ -1,0 +1,7 @@
+#include <stdio.h>  
+
+int main(){
+    int a= 5||7,b=1<2,c=a&&b||d;
+    e++;
+    int b=10 c=5;
+}

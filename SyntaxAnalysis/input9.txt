@@ -1,0 +1,14 @@
+#include <stdio.h>  
+
+int main(char ** args){
+    //While Loop
+    while(a<b){
+        if(a>10){
+            continue
+        }
+        else{
+            break;
+        }
+        a++;
+    }
+}

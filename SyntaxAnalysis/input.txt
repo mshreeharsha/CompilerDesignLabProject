@@ -1,5 +1,5 @@
 #include <stdio.h>  
-#include "y.tab.h"
+#include <stdlib.h>
 
 int a=10;
 void printN(int n,int a[][3][8][7],int ****a){
@@ -13,13 +13,13 @@ typedef struct Rectangle {
     char a[10][20];
 }emp1,emp2;
 
-union Person {
+unin Person {
     char name[50];
     int age;
     struct Address address;
 };
 
-int main(){
+int main(char ** args){
     a=15;
     int b=10;
     b++;
@@ -36,7 +36,9 @@ int main(){
         case 'a' : printf("hello");
         default : printf("World");
     }
+    /* hello
 
+    everyone */
     int * a = d;
     if(a<10){
         printf("Less Than 10");
