@@ -6,13 +6,12 @@ typedef struct Employee {
     struct Employee * r;
     int * a;
     char arr[10][20];
-    a=10;
 }emp1,emp2;
 
 union Person {
     char name[50];
     int age;
-    struct Address address;
+    Address address;
 };
 
 int main(){

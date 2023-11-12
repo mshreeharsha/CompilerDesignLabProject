@@ -7,5 +7,6 @@ int main(){
     printf("Hello World");
     printf("%d %d %d",a,b,c,d);
     scanf("%s",&a,&b,&c);
-    scanf(&a,b,c);
+
+    a=++i+--j+j--;
 }
