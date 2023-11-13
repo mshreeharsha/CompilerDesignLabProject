@@ -19,7 +19,7 @@ for {return FOR;}
 while {return WHILE;}
 (int|void)[ ]+main[ ]*\( {return MAIN;}
 (int|float|char|double|long|unsigned|void)[ ]+[a-zA-Z_][a-zA-Z0-9_]{0,30}[ ]*\( {return FUN_START;}
-int|float|char|double|long|unsigned {yylval.type=strdup(yytext);return TYPE;}
+int|float|char|double|long|unsigned {return TYPE;}
 switch {return SWITCH;}
 case {return CASE;}
 struct {return STRUCT;}
@@ -29,8 +29,8 @@ printf {return PRINTF;}
 scanf {return SCANF;}
 \#[ \t]*include {return INCLUDE;}
 \<[a-zA-Z]+\.h\> {return PREDEF_HEADER;}
-[a-zA-Z_][a-zA-Z0-9_]{0,30} {yylval.value=strdup(yytext);return ID;}
--?[1-9][0-9]{0,8}|-?1[0-9]{0,9}|-?2[0-1][0-4][0-7][0-4][0-8][0-3][0-6][0-4][0-7]|0 {yylval.type=strdup("int");return INTEGER;}
+[a-zA-Z_][a-zA-Z0-9_]{0,30} {return ID;}
+-?[1-9][0-9]{0,8}|-?1[0-9]{0,9}|-?2[0-1][0-4][0-7][0-4][0-8][0-3][0-6][0-4][0-7]|0 {return INTEGER;}
 [-]?[0-9]+\.[0-9]{1,6} {return FLOATING_NUM;}
 \/\/[^\n]* {return SL_COMMENT;}
 \/\*[^*/]*\*\/ {return ML_COMMENT;}
