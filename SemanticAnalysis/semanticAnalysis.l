@@ -25,8 +25,8 @@ while {return WHILE;}
 int|float|char|double|long|unsigned {yylval.type=strdup(yytext);return TYPE;}
 switch {return SWITCH;}
 case {return CASE;}
-struct {return STRUCT;}
-union {return UNION;}
+struct {yylval.type=strdup("struct");return STRUCT;}
+union {yylval.type=strdup("union");return UNION;}
 return {return RETURN;}
 printf {return PRINTF;}
 scanf {return SCANF;}

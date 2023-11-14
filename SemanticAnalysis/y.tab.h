@@ -44,64 +44,64 @@
      STRING = 260,
      FLOATING_NUM = 261,
      CHAR_CONST = 262,
-     ID = 263,
-     FUN_START = 264,
-     INCLUDE = 265,
-     PREDEF_HEADER = 266,
-     ELIF = 267,
-     ELSE = 268,
-     IF = 269,
-     BREAK = 270,
-     NOT = 271,
-     FOR = 272,
-     CONTINUE = 273,
-     WHILE = 274,
-     SWITCH = 275,
-     CASE = 276,
-     STRUCT = 277,
-     UNION = 278,
-     RETURN = 279,
-     SL_COMMENT = 280,
-     ML_COMMENT = 281,
-     EQUALTO = 282,
-     OPEN_BRACK = 283,
-     OPEN_FLOWER = 284,
-     OPEN_SQ = 285,
-     CLOSE_BRACK = 286,
-     CLOSE_FLOWER = 287,
-     CLOSE_SQ = 288,
-     AND = 289,
-     UNARY_OP = 290,
-     PLUS = 291,
-     MINUS = 292,
-     DIV = 293,
-     MUL = 294,
-     MOD = 295,
-     OR = 296,
-     AMPERSAND = 297,
-     BIT_OR = 298,
-     BIT_XOR = 299,
-     SEMICOLON = 300,
-     COMMA = 301,
-     ISEQUALTO = 302,
-     LT = 303,
-     LTE = 304,
-     GT = 305,
-     GTE = 306,
-     NE = 307,
-     PLUS_ET = 308,
-     MINUS_ET = 309,
-     MUL_ET = 310,
-     DIV_ET = 311,
-     OR_ET = 312,
-     AND_ET = 313,
-     XOR_ET = 314,
-     PRINTF = 315,
-     SCANF = 316,
-     MAIN = 317,
-     COLON = 318,
-     DEFAULT = 319,
-     VOID = 320,
+     STRUCT = 263,
+     UNION = 264,
+     VOID = 265,
+     ID = 266,
+     FUN_START = 267,
+     INCLUDE = 268,
+     PREDEF_HEADER = 269,
+     ELIF = 270,
+     ELSE = 271,
+     IF = 272,
+     BREAK = 273,
+     NOT = 274,
+     FOR = 275,
+     CONTINUE = 276,
+     WHILE = 277,
+     SWITCH = 278,
+     CASE = 279,
+     RETURN = 280,
+     SL_COMMENT = 281,
+     ML_COMMENT = 282,
+     EQUALTO = 283,
+     OPEN_BRACK = 284,
+     OPEN_FLOWER = 285,
+     OPEN_SQ = 286,
+     CLOSE_BRACK = 287,
+     CLOSE_FLOWER = 288,
+     CLOSE_SQ = 289,
+     AND = 290,
+     UNARY_OP = 291,
+     PLUS = 292,
+     MINUS = 293,
+     DIV = 294,
+     MUL = 295,
+     MOD = 296,
+     OR = 297,
+     AMPERSAND = 298,
+     BIT_OR = 299,
+     BIT_XOR = 300,
+     SEMICOLON = 301,
+     COMMA = 302,
+     ISEQUALTO = 303,
+     LT = 304,
+     LTE = 305,
+     GT = 306,
+     GTE = 307,
+     NE = 308,
+     PLUS_ET = 309,
+     MINUS_ET = 310,
+     MUL_ET = 311,
+     DIV_ET = 312,
+     OR_ET = 313,
+     AND_ET = 314,
+     XOR_ET = 315,
+     PRINTF = 316,
+     SCANF = 317,
+     MAIN = 318,
+     COLON = 319,
+     DEFAULT = 320,
      MALLOC = 321,
      SIZEOF = 322,
      TYPEDEF = 323,
@@ -115,64 +115,64 @@
 #define STRING 260
 #define FLOATING_NUM 261
 #define CHAR_CONST 262
-#define ID 263
-#define FUN_START 264
-#define INCLUDE 265
-#define PREDEF_HEADER 266
-#define ELIF 267
-#define ELSE 268
-#define IF 269
-#define BREAK 270
-#define NOT 271
-#define FOR 272
-#define CONTINUE 273
-#define WHILE 274
-#define SWITCH 275
-#define CASE 276
-#define STRUCT 277
-#define UNION 278
-#define RETURN 279
-#define SL_COMMENT 280
-#define ML_COMMENT 281
-#define EQUALTO 282
-#define OPEN_BRACK 283
-#define OPEN_FLOWER 284
-#define OPEN_SQ 285
-#define CLOSE_BRACK 286
-#define CLOSE_FLOWER 287
-#define CLOSE_SQ 288
-#define AND 289
-#define UNARY_OP 290
-#define PLUS 291
-#define MINUS 292
-#define DIV 293
-#define MUL 294
-#define MOD 295
-#define OR 296
-#define AMPERSAND 297
-#define BIT_OR 298
-#define BIT_XOR 299
-#define SEMICOLON 300
-#define COMMA 301
-#define ISEQUALTO 302
-#define LT 303
-#define LTE 304
-#define GT 305
-#define GTE 306
-#define NE 307
-#define PLUS_ET 308
-#define MINUS_ET 309
-#define MUL_ET 310
-#define DIV_ET 311
-#define OR_ET 312
-#define AND_ET 313
-#define XOR_ET 314
-#define PRINTF 315
-#define SCANF 316
-#define MAIN 317
-#define COLON 318
-#define DEFAULT 319
-#define VOID 320
+#define STRUCT 263
+#define UNION 264
+#define VOID 265
+#define ID 266
+#define FUN_START 267
+#define INCLUDE 268
+#define PREDEF_HEADER 269
+#define ELIF 270
+#define ELSE 271
+#define IF 272
+#define BREAK 273
+#define NOT 274
+#define FOR 275
+#define CONTINUE 276
+#define WHILE 277
+#define SWITCH 278
+#define CASE 279
+#define RETURN 280
+#define SL_COMMENT 281
+#define ML_COMMENT 282
+#define EQUALTO 283
+#define OPEN_BRACK 284
+#define OPEN_FLOWER 285
+#define OPEN_SQ 286
+#define CLOSE_BRACK 287
+#define CLOSE_FLOWER 288
+#define CLOSE_SQ 289
+#define AND 290
+#define UNARY_OP 291
+#define PLUS 292
+#define MINUS 293
+#define DIV 294
+#define MUL 295
+#define MOD 296
+#define OR 297
+#define AMPERSAND 298
+#define BIT_OR 299
+#define BIT_XOR 300
+#define SEMICOLON 301
+#define COMMA 302
+#define ISEQUALTO 303
+#define LT 304
+#define LTE 305
+#define GT 306
+#define GTE 307
+#define NE 308
+#define PLUS_ET 309
+#define MINUS_ET 310
+#define MUL_ET 311
+#define DIV_ET 312
+#define OR_ET 313
+#define AND_ET 314
+#define XOR_ET 315
+#define PRINTF 316
+#define SCANF 317
+#define MAIN 318
+#define COLON 319
+#define DEFAULT 320
 #define MALLOC 321
 #define SIZEOF 322
 #define TYPEDEF 323
@@ -187,7 +187,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 412 ".\\semanticAnalysis.y"
+#line 415 ".\\semanticAnalysis.y"
 
     char * value;
     char * type;

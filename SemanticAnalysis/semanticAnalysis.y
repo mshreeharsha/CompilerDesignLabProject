@@ -30,7 +30,7 @@
 
     //Datatypes
     char datatypesArray[][20]={"int","char","float","string"};
-    char CLASS[][20]={"variable","function","array","pointer","struct","union"};
+    char CLASS[][20]={"variable","function","array","pointer","userDefType"};
     int checkCompartibility(char *a,char *b){
         if(strcmp(a,datatypesArray[0])==0 && strcmp(b,datatypesArray[0])==0){
             return 0;
@@ -389,6 +389,8 @@
     
     //To store type
     char typeBuffer[10];
+    char userTypeBuffer[10];
+    char userTypeNameBuffer[10];
     char IDBuffer[30];
 
     char funTypeBuffer[30];
@@ -407,17 +409,18 @@
 
     int parD[10];
     int parDi=0;
+    int userTypeDim = 0;
 %}
 
 %union{
     char * value;
     char * type;
 }
-%type<type> type choice item PTR_TYPE idinsert idlook pointerAsAParameter
-%token<type> TYPE INTEGER STRING FLOATING_NUM CHAR_CONST 
+%type<type> type choice item PTR_TYPE idinsert idlook pointerAsAParameter userDefDataType
+%token<type> TYPE INTEGER STRING FLOATING_NUM CHAR_CONST STRUCT UNION VOID
 %token<value> ID FUN_START
 
-%token INCLUDE PREDEF_HEADER  ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE STRUCT UNION RETURN  SL_COMMENT ML_COMMENT  EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN COLON DEFAULT VOID MALLOC SIZEOF TYPEDEF DOT ARROW
+%token INCLUDE PREDEF_HEADER  ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE RETURN  SL_COMMENT ML_COMMENT  EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN COLON DEFAULT MALLOC SIZEOF TYPEDEF DOT ARROW
 
 %right XOR_ET OR_ET AND_ET
 %right PLUS_ET MINUS_ET MUL_ET DIV_ET EQUALTO
@@ -447,7 +450,13 @@ globalVarDec : type idgi optionsG DGd SEMICOLON startGlobal
                | idgl optionsG DGl SEMICOLON startGlobal 
 DGd : COMMA idgi optionsG DGd |
 DGl : COMMA idgl optionsG DGd | 
-optionsG : EQUALTO Exp | 
+optionsG : EQUALTO Exp | EQUALTO function_call1{
+    if(strcmp(forFunc->dataType,"void")==0){
+        char const errorMessage[100]="Void Function Does not return anything";
+        int a=yyerror(errorMessage);
+        return -1;
+    }
+} |
 
 idgi : ID {
     struct SymbolTableEntry * search=lookup($1,1,true);
@@ -976,7 +985,11 @@ arrayDeclr : type ID2
     BOX SEMICOLON {struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;}
 BOX : BOX open_sq integer_dim CLOSE_SQ | open_sq integer_dim CLOSE_SQ
 
-integer_dim : INTEGER {dimbuffer[dimit++] = intval;}
+integer_dim : INTEGER {dimbuffer[dimit++] = intval;if(intval<=0){
+    char message[50]="Array Index Should be Greater Than Equal to 0";
+    int a=yyerror(message);
+    return -1;
+}}
 arrayInitial : type ID2 BOX EQUALTO open_flower BALANCED_BRACK close_flower SEMICOLON | type ID2 BOX EQUALTO open_flower close_flower SEMICOLON
 BALANCED_BRACK : arrayParams_unend 
             | arrayParams_unend COMMA
@@ -1060,20 +1073,112 @@ matched: IF OPEN_BRACK Exp CLOSE_BRACK open_flower start1 close_flower elif ELSE
 elif : ELIF OPEN_BRACK Exp CLOSE_BRACK open_flower start1 close_flower elif | 
 unmatched: IF OPEN_BRACK Exp CLOSE_BRACK open_flower start1 close_flower elif
 
-userTypeDefination : TYPEDEF userDefDataType ID open_flower userTypeParams close_flower userTypeObj SEMICOLON startGlobal | userDefDataType ID open_flower userTypeParams close_flower userTypeObj SEMICOLON startGlobal
-userTypeParams : type ID higherDimention SEMICOLON userTypeParams  
-                | pointerAsAParameter SEMICOLON userTypeParams
-                | userDefDataType ID ID SEMICOLON userTypeParams
-                | type ID higherDimention SEMICOLON
-                | pointerAsAParameter SEMICOLON
-                | userDefDataType ID ID SEMICOLON
+userTypeDefination : TYPEDEF userDefDataType sidi open_flower userTypeParams close_flower{
+        struct SymbolTableEntry*new_entry=insertIdentifier(userTypeNameBuffer,CLASS[4],userTypeBuffer,userTypeDim,yylinenumber,scope);
+        userTypeDim = 0;
+    } userTypeObj SEMICOLON startGlobal 
+                | userDefDataType sidi open_flower userTypeParams close_flower 
+                {
+        struct SymbolTableEntry*new_entry=insertIdentifier(userTypeNameBuffer,CLASS[4],userTypeBuffer,userTypeDim,yylinenumber,scope);
+        userTypeDim = 0;
+                }
+                userTypeObj SEMICOLON startGlobal
+userTypeParams : varInStruct SEMICOLON userTypeParams  
+                | pointerInStruct SEMICOLON userTypeParams
+                | structInStruct SEMICOLON userTypeParams
+                | varInStruct SEMICOLON
+                | pointerInStruct SEMICOLON
+                | structInStruct SEMICOLON
+
+                //do from here
 userTypeObj : ID | userTypeObj COMMA ID | 
+
+
 userTypeDeclaration : userDefDataType ID ID SEMICOLON | ID ID SEMICOLON
 userTypeInitialization : userDefDataType ID ID EQUALTO open_flower params close_flower SEMICOLON
                         | ID DOT ID EQUALTO item SEMICOLON
                         | ID ARROW ID EQUALTO item SEMICOLON
 
-userDefDataType : STRUCT | UNION
+userDefDataType : STRUCT {
+            strcpy(userTypeBuffer,$1);
+            $$=malloc(strlen($1)+1);
+            strcpy($$,$1);
+        }
+                | UNION {
+            strcpy(userTypeBuffer,$1);
+            $$=malloc(strlen($1)+1);
+            strcpy($$,$1);
+        }
+
+sidi: ID {
+    struct SymbolTableEntry * search=lookup($1,1,true);
+    if(search!=NULL){
+        char message[30]="Variable Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        strcpy(userTypeNameBuffer, $1);
+    }
+}
+pointerInStruct: PTR_TYPE PTR_STAR ID{
+    struct SymbolTableEntry * found=lookup($3,scope,true);
+    if(found != NULL)
+    {
+        char const errorMessage[100]="Variable Already Declared!!";
+        int a=yyerror(errorMessage);
+        return -1;
+    }
+    else{
+        struct SymbolTableEntry*new_entry=insertIdentifier($3,CLASS[3],userTypeNameBuffer,pointerLen,yylinenumber,scope);
+        pointerLen = 1;
+    }
+    userTypeDim++;
+}
+
+varInStruct: type ID higherDimention
+{
+    struct SymbolTableEntry * search=lookup($2,scope,true);
+    if(search!=NULL){
+        char message[30]="Variable Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        if(dimit==0){
+            struct SymbolTableEntry*new_entry=insertIdentifier($2,CLASS[0],userTypeNameBuffer,dimit,yylinenumber,scope);
+        }else{
+            struct SymbolTableEntry*new_entry=insertIdentifier($2,CLASS[2],userTypeNameBuffer,dimit,yylinenumber,scope);
+        }
+        
+        userTypeDim++;
+        dimit = 0;
+    }
+}
+
+structInStruct: userDefDataType ID ID 
+    {
+                    struct SymbolTableEntry * search=lookup($2,1,true);
+                    if(search==NULL){
+                        char message[30]="Variable Not Declared";
+                        int res=yyerror(message);
+                        return -1;
+                    }else if(strcmp(search->dataType,$1)!=0){
+                            char message[30]="Varible Type Mismatch!!";
+                            int res=yyerror(message);
+                            return -1;
+                    }
+                    else{struct SymbolTableEntry * search=lookup($3,scope,true);
+                        if(search!=NULL){
+                        char message[30]="Variable Already Declared";
+                        int res=yyerror(message);
+                        return -1;
+                        }else{
+                            struct SymbolTableEntry*new_entry=insertIdentifier($3,CLASS[4],$2,0,yylinenumber,scope);
+                        }
+                    }
+                    userTypeDim++;       
+                }
 
 %%
 

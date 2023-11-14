@@ -2,13 +2,26 @@
 
 int b=10,c=10;
 
-void harsha(int ** ptr){
+int harsha(int ** ptr){
     printf("Hello\n");
 }
+
+int ddd(){
+
+}
+
+int d=ddd();
+
+struct aeroplane{
+    int noOfWheels;
+    int seats;
+    char * name;
+    int arr[0];
+};
 
 int main()
 {
     int b=10;
-    int **a=&b;
+    int **a=b;
     harsha(a);
 }

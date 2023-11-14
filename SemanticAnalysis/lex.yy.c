@@ -1000,12 +1000,12 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 28 ".\\semanticAnalysis.l"
-{return STRUCT;}
+{yylval.type=strdup("struct");return STRUCT;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 29 ".\\semanticAnalysis.l"
-{return UNION;}
+{yylval.type=strdup("union");return UNION;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
