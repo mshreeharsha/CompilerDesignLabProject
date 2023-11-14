@@ -417,7 +417,7 @@
     char * type;
 }
 %type<type> type choice item PTR_TYPE idinsert idlook pointerAsAParameter userDefDataType
-%token<type> TYPE INTEGER STRING FLOATING_NUM CHAR_CONST STRUCT UNION VOID
+%token<type> NULLT TYPE INTEGER STRING FLOATING_NUM CHAR_CONST STRUCT UNION VOID
 %token<value> ID FUN_START
 
 %token INCLUDE PREDEF_HEADER  ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE RETURN  SL_COMMENT ML_COMMENT  EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN COLON DEFAULT MALLOC SIZEOF TYPEDEF DOT ARROW
@@ -445,6 +445,7 @@ newHeader: header |
 file : STRING | PREDEF_HEADER 
 
 startGlobal : function_defn | globalVarDec | userTypeDefination | userTypeDeclaration startGlobal | 
+            |arrayDeclr startGlobal | arrayInitial startGlobal | PTR_INITIAL startGlobal | PTR_DECLR startGlobal
 
 globalVarDec : type idgi optionsG DGd SEMICOLON startGlobal 
                | idgl optionsG DGl SEMICOLON startGlobal 
@@ -901,6 +902,7 @@ item : ID {
     | STRING {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';parD[parDi++]=0;}
     | CHAR_CONST {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';parD[parDi++]=0;}
     | FLOATING_NUM {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';parD[parDi++]=0;}
+    | NULLT
 
 fun_start : FUN_START {
     char Type[10];
@@ -985,11 +987,7 @@ arrayDeclr : type ID2
     BOX SEMICOLON {struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;}
 BOX : BOX open_sq integer_dim CLOSE_SQ | open_sq integer_dim CLOSE_SQ
 
-integer_dim : INTEGER {dimbuffer[dimit++] = intval;if(intval<=0){
-    char message[50]="Array Index Should be Greater Than Equal to 0";
-    int a=yyerror(message);
-    return -1;
-}}
+integer_dim : INTEGER {dimbuffer[dimit++] = intval;}
 arrayInitial : type ID2 BOX EQUALTO open_flower BALANCED_BRACK close_flower SEMICOLON | type ID2 BOX EQUALTO open_flower close_flower SEMICOLON
 BALANCED_BRACK : arrayParams_unend 
             | arrayParams_unend COMMA
@@ -1091,13 +1089,65 @@ userTypeParams : varInStruct SEMICOLON userTypeParams
                 | structInStruct SEMICOLON
 
                 //do from here
-userTypeObj : ID | userTypeObj COMMA ID | 
+userTypeObj : uIDi | userTypeObj COMMA uIDi | 
+
+uIDi: ID {
+    struct SymbolTableEntry * search=lookup($1,1,true);
+    if(search!=NULL){
+        char message[30]="Variable Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        struct SymbolTableEntry*new_entry=insertIdentifier($1,userTypeBuffer,userTypeNameBuffer,0,yylinenumber,1);
+    }
+}
 
 
-userTypeDeclaration : userDefDataType ID ID SEMICOLON | ID ID SEMICOLON
-userTypeInitialization : userDefDataType ID ID EQUALTO open_flower params close_flower SEMICOLON
-                        | ID DOT ID EQUALTO item SEMICOLON
-                        | ID ARROW ID EQUALTO item SEMICOLON
+userTypeDeclaration : structInStruct SEMICOLON | ID ID SEMICOLON
+userTypeInitialization : structInStruct EQUALTO open_flower params close_flower SEMICOLON
+                        | ID DOT ID {
+                            struct SymbolTableEntry * search=lookup($1,1,true);
+                            
+                            if(search==NULL){
+                                char message[30]="Variable Not Declared";
+                                int res=yyerror(message);
+                                return -1;
+                            }else {
+                                struct SymbolTableEntry * search1=lookup($3,1,true);
+                                if(search1 == NULL){
+                                    char message[50]="Variable Not Part of the User definied Data Type";
+                                    int res=yyerror(message);
+                                return -1;
+                                }
+                            if(strcmp(search->dataType,search1->dataType)!=0){
+                                    char message[30]="Varible Type Mismatch!!";
+                                    int res=yyerror(message);
+                                    return -1;
+                            }
+                            }
+                        } EQUALTO item SEMICOLON
+                        | ID ARROW ID{
+                            struct SymbolTableEntry * search=lookup($1,1,true);
+                            
+                            if(search==NULL){
+                                char message[30]="Variable Not Declared";
+                                int res=yyerror(message);
+                                return -1;
+                            }else {
+                                struct SymbolTableEntry * search1=lookup($3,1,true);
+                                if(search1 == NULL){
+                                    char message[50]="Variable Not Part of the User definied Data Type";
+                                    int res=yyerror(message);
+                                return -1;
+                                }
+                            if(strcmp(search->dataType,search1->dataType)!=0){
+                                    char message[30]="Varible Type Mismatch!!";
+                                    int res=yyerror(message);
+                                    return -1;
+                            }
+                            }
+                        } EQUALTO item SEMICOLON
 
 userDefDataType : STRUCT {
             strcpy(userTypeBuffer,$1);
@@ -1122,7 +1172,7 @@ sidi: ID {
     }
 }
 pointerInStruct: PTR_TYPE PTR_STAR ID{
-    struct SymbolTableEntry * found=lookup($3,scope,true);
+    struct SymbolTableEntry * found=lookup($3,1,true);
     if(found != NULL)
     {
         char const errorMessage[100]="Variable Already Declared!!";
@@ -1130,7 +1180,7 @@ pointerInStruct: PTR_TYPE PTR_STAR ID{
         return -1;
     }
     else{
-        struct SymbolTableEntry*new_entry=insertIdentifier($3,CLASS[3],userTypeNameBuffer,pointerLen,yylinenumber,scope);
+        struct SymbolTableEntry*new_entry=insertIdentifier($3,CLASS[3],userTypeNameBuffer,pointerLen,yylinenumber,1);
         pointerLen = 1;
     }
     userTypeDim++;
@@ -1138,7 +1188,7 @@ pointerInStruct: PTR_TYPE PTR_STAR ID{
 
 varInStruct: type ID higherDimention
 {
-    struct SymbolTableEntry * search=lookup($2,scope,true);
+    struct SymbolTableEntry * search=lookup($2,1,true);
     if(search!=NULL){
         char message[30]="Variable Already Declared";
         int res=yyerror(message);
@@ -1146,9 +1196,9 @@ varInStruct: type ID higherDimention
     }
     else{
         if(dimit==0){
-            struct SymbolTableEntry*new_entry=insertIdentifier($2,CLASS[0],userTypeNameBuffer,dimit,yylinenumber,scope);
+            struct SymbolTableEntry*new_entry=insertIdentifier($2,CLASS[0],userTypeNameBuffer,dimit,yylinenumber,1);
         }else{
-            struct SymbolTableEntry*new_entry=insertIdentifier($2,CLASS[2],userTypeNameBuffer,dimit,yylinenumber,scope);
+            struct SymbolTableEntry*new_entry=insertIdentifier($2,CLASS[2],userTypeNameBuffer,dimit,yylinenumber,1);
         }
         
         userTypeDim++;
@@ -1168,13 +1218,13 @@ structInStruct: userDefDataType ID ID
                             int res=yyerror(message);
                             return -1;
                     }
-                    else{struct SymbolTableEntry * search=lookup($3,scope,true);
-                        if(search!=NULL){
+                    else{struct SymbolTableEntry * search1=lookup($3,1,true);
+                        if(search1!=NULL){
                         char message[30]="Variable Already Declared";
                         int res=yyerror(message);
                         return -1;
                         }else{
-                            struct SymbolTableEntry*new_entry=insertIdentifier($3,CLASS[4],$2,0,yylinenumber,scope);
+                            struct SymbolTableEntry*new_entry=insertIdentifier($3,search->dataType,$2,0,yylinenumber,1);
                         }
                     }
                     userTypeDim++;       

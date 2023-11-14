@@ -10,6 +10,7 @@ malloc {return MALLOC;}
 sizeof {return SIZEOF;}
 typedef {return TYPEDEF;}
 else[ ]+if {return ELIF;}
+NULL {return NULLT;}
 if {return IF;}
 else {return ELSE;}
 break {return BREAK;}
