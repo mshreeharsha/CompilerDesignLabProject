@@ -1,18 +1,14 @@
 #include <stdio.h>
 
-int func(int a[2][2],int b){
-    printf("%d",b);
+int b=10,c=10;
+
+void harsha(int ** ptr){
+    printf("Hello\n");
 }
 
-int func3(int dfghj[10]){
-
-}
-
-int main(){
-    int arr[9];
-    func(c,e);
-    int b[10];
-    int e=10;
-    int c[10][10];
-    func3(b);
+int main()
+{
+    int b=10;
+    int **a=&b;
+    harsha(a);
 }

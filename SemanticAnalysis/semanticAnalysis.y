@@ -21,6 +21,10 @@
     int dimbuffer[30];
     int dimit = 0;
 
+    int pointerLen = 1;
+    char ptrBuf[100];
+    int ptrBI=0;
+
     int PD[20];
     int pdi=0;
 
@@ -409,8 +413,8 @@
     char * value;
     char * type;
 }
-%type<type> type choice item
-%token<type> TYPE INTEGER STRING FLOATING_NUM CHAR_CONST
+%type<type> type choice item PTR_TYPE idinsert idlook pointerAsAParameter
+%token<type> TYPE INTEGER STRING FLOATING_NUM CHAR_CONST 
 %token<value> ID FUN_START
 
 %token INCLUDE PREDEF_HEADER  ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE STRUCT UNION RETURN  SL_COMMENT ML_COMMENT  EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN COLON DEFAULT VOID MALLOC SIZEOF TYPEDEF DOT ARROW
@@ -439,12 +443,36 @@ file : STRING | PREDEF_HEADER
 
 startGlobal : function_defn | globalVarDec | userTypeDefination | userTypeDeclaration startGlobal | 
 
-globalVarDec : type ID optionsG DG SEMICOLON startGlobal 
-               | ID optionsG DG SEMICOLON startGlobal 
-DG : COMMA ID optionsG DG | 
+globalVarDec : type idgi optionsG DGd SEMICOLON startGlobal 
+               | idgl optionsG DGl SEMICOLON startGlobal 
+DGd : COMMA idgi optionsG DGd |
+DGl : COMMA idgl optionsG DGd | 
 optionsG : EQUALTO Exp | 
 
-main: MAIN mainParameters CLOSE_BRACK open_flower  start1 close_flower 
+idgi : ID {
+    struct SymbolTableEntry * search=lookup($1,1,true);
+    if(search!=NULL){
+        char message[30]="Variable Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        struct SymbolTableEntry*new_entry=insertIdentifier($1,CLASS[0],typeBuffer,0,yylinenumber,1);
+    }
+}
+idgl: ID {
+            struct SymbolTableEntry * search=lookup($1,scope,false);
+            if(search==NULL){
+                char message[30]="Variable Not Declared";
+                int res=yyerror(message);
+                return -1;
+            }
+            else{
+                update(search,yylinenumber);
+            }
+         } 
+
+main: MAIN mainParameters CLOSE_BRACK open_flower  start1 close_flower
 mainParameters : parameter_list |
 
 start1: varDec |print | scanf | function_call |  while | for
@@ -481,27 +509,13 @@ varDec : type id options D SEMICOLON start1
         } start1
 
 D : COMMA id options D | 
-options : EQUALTO Exp | EQUALTO ID{
-    struct SymbolTableEntry * search=lookup($2,scope,false);
-    if(search==NULL){
-        char message[30]="Function Not Declared";
-        int res=yyerror(message);
+options : EQUALTO Exp | EQUALTO function_call1{
+    if(strcmp(forFunc->dataType,"void")==0){
+        char const errorMessage[100]="Void Function Does not return anything";
+        int a=yyerror(errorMessage);
         return -1;
     }
-    else{
-        update(search,yylinenumber);
-    }
-} OPEN_BRACK params CLOSE_BRACK | ID{
-    struct SymbolTableEntry * search=lookup($1,scope,false);
-    if(search==NULL){
-        char message[30]="Function Not Declared";
-        int res=yyerror(message);
-        return -1;
-    }
-    else{
-        update(search,yylinenumber);
-    }
-} OPEN_BRACK CLOSE_BRACK | 
+} | 
 
 id: ID {
     struct SymbolTableEntry * search=lookup($1,scope,true);
@@ -574,6 +588,7 @@ function_declaration: fun_start parameter_list CLOSE_BRACK{
     }
     struct SymbolTableEntry* new_entry = insertFunction(funNameBuffer,CLASS[1],funTypeBuffer,0,yylinenumber,scope,noOfParameters,PL,PTL);
     noOfParameters=0;
+    pointerLen=1;
 }
                       | fun_start CLOSE_BRACK {
                         struct SymbolTableEntry * entry = lookup(funNameBuffer,1,true);
@@ -584,6 +599,7 @@ function_declaration: fun_start parameter_list CLOSE_BRACK{
                         }
                         struct SymbolTableEntry* new_entry = insertFunction(funNameBuffer,CLASS[1],funTypeBuffer,0,yylinenumber,scope,noOfParameters,PL,PTL);
                         noOfParameters=0;
+                        pointerLen=1;
                       }
 parameter_list: parameter_list COMMA type ID choice{
     char flag;
@@ -618,8 +634,20 @@ parameter_list: parameter_list COMMA type ID choice{
     PTL[noOfParameters]=flag;
     noOfParameters++;
 }
-                | parameter_list COMMA pointerAsAParameter
-                | pointerAsAParameter
+                | parameter_list COMMA pointerAsAParameter{
+                    struct SymbolTableEntry*new_entry = insertIdentifier(ptrBuf,CLASS[3],$3,pointerLen,yylinenumber,scope+1);
+                    PD[noOfParameters]=pointerLen;
+                    strcpy(PL[noOfParameters],$3);
+                    PTL[noOfParameters]='p';
+                    noOfParameters++;
+                }
+                | pointerAsAParameter{
+                    struct SymbolTableEntry*new_entry = insertIdentifier(ptrBuf,CLASS[3],$1,pointerLen,yylinenumber,scope+1);
+                    PD[noOfParameters]=pointerLen;
+                    strcpy(PL[noOfParameters],$1);
+                    PTL[noOfParameters]='p';
+                    noOfParameters++;
+                }
                 | type ID choice {
                     struct SymbolTableEntry * search=lookup($2,scope+1,true);
                     if(search!=NULL){
@@ -726,6 +754,85 @@ function_call : funName OPEN_BRACK params CLOSE_BRACK{
                     noOfParameters=0;
                 } SEMICOLON start1 
 
+function_call1 : funName OPEN_BRACK params CLOSE_BRACK{
+    int nop=forFunc->noOfParams;
+    if(noOfParameters!=nop){
+        char message[50]="No of Parameters of the Function Does not match";
+        int res=yyerror(message);
+        return -1;
+    }
+ 
+    for(int i=0;i<nop;i++){
+        if(strcmp(PL[i],forFunc->paraList[i])!=0){
+            char message[50]="DataTypes of Parameters did not match";
+            int res=yyerror(message);
+            return -1;
+        }
+    }
+    
+    for(int i=0;i<nop;i++){
+        if(PTL[i]!=forFunc->paraTypes[i]){
+            char message[40]="Type(Class) of Parameters did not match";
+            int res=yyerror(message);
+            return -1;
+        }
+    }
+
+    for(int i=0;i<nop;i++){
+        if(parD[i]!=forFunc->paraDim[i]){
+            char message[40]="Dimension does not match";
+            int res=yyerror(message);
+            return -1;
+        }
+    }
+    parDi=0;
+    noOfParameters=0;
+}  start1 
+                | funName OPEN_BRACK CLOSE_BRACK{
+                    int nop=forFunc->noOfParams;
+                    
+                    if(noOfParameters!=nop){
+                        char message[50]="No of Parameters of the Function Does not match";
+                        int res=yyerror(message);
+                        return -1;
+                    }
+                    char temp[20];
+                    char t;
+                    for(int i=0;i<nop/2;i++){
+                        strcpy(temp,PL[i]);
+                        strcpy(PL[i],PL[nop-i-1]);
+                        strcpy(PL[nop-i-1],temp);
+                        t=PTL[i];
+                        PTL[i]=PTL[nop-i-1];
+                        PTL[nop-i-1]=t;
+                    }
+
+                    for(int i=0;i<nop;i++){
+                        if(strcmp(PTL[i],forFunc->paraList[i])!=0){
+                            char message[40]="DataTypes of Parameters did not match";
+                            int res=yyerror(message);
+                            return -1;
+                        }
+                    }
+
+                    for(int i=0;i<nop;i++){
+                        if(PTL[i]!=forFunc->paraTypes[i]){
+                            char message[40]="Type(Class) of Parameters did not match";
+                            int res=yyerror(message);
+                            return -1;
+                        }
+                    }
+                    for(int i=0;i<nop;i++){
+                        if(parD[i]!=forFunc->paraDim[i]){
+                            char message[40]="Dimension does not match";
+                            int res=yyerror(message);
+                            return -1;
+                        }
+                    }
+
+                    parDi=0;
+                    noOfParameters=0;
+                }  start1 
 funName: ID{
     forFunc = lookup($1,1,true);
     if(forFunc==NULL){
@@ -762,6 +869,11 @@ item : ID {
     }
     if(strcmp(entry->type,CLASS[0])==0){
         pt='v';
+        parD[parDi++]=entry->dimension;
+        update(entry,yylinenumber);
+    }
+    else if(strcmp(entry->type,CLASS[3])==0){
+        pt='p';
         parD[parDi++]=entry->dimension;
         update(entry,yylinenumber);
     }
@@ -879,11 +991,60 @@ arrayParams_unend : INTEGER | arrayParams_unend COMMA INTEGER
 arrayAsAParameter : OPEN_SQ integer_dim CLOSE_SQ higherDimention
 higherDimention : BOX | 
 
-pointerAsAParameter : PTR_TYPE PTR_STAR ID
+pointerAsAParameter : PTR_TYPE PTR_STAR ID{
+    struct SymbolTableEntry * found=lookup($3,scope+1,true);
+    if(found != NULL)
+    {
+        char const errorMessage[100]="Variable Already Declared!!";
+        int a=yyerror(errorMessage);
+        return -1;
+    }
+    else{
+        strcpy(ptrBuf,$3);
+        $$=malloc(strlen($1)+1);
+        strcpy($$,$1);
+    }
+}
 
-PTR_DECLR : PTR_TYPE PTR_STAR ID SEMICOLON
-PTR_INITIAL : PTR_TYPE PTR_STAR ID EQUALTO AMPERSAND ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO ID SEMICOLON | PTR_TYPE PTR_STAR ID EQUALTO PTR_EXP SEMICOLON
-PTR_STAR : PTR_STAR MUL | MUL
+PTR_DECLR : PTR_TYPE PTR_STAR idinsert SEMICOLON
+PTR_INITIAL : PTR_TYPE PTR_STAR idinsert EQUALTO AMPERSAND idlook {if(strcmp($3,$6)!=0){
+    char message[30]="Variable Types dont Match";
+        int res=yyerror(message);
+        return -1;}}SEMICOLON | PTR_TYPE PTR_STAR idinsert EQUALTO idlook {if(strcmp($3,$5)!=0){
+    char message[30]="Variable Types dont Match";
+        int res=yyerror(message);
+        return -1;
+}}SEMICOLON | PTR_TYPE PTR_STAR idinsert EQUALTO PTR_EXP SEMICOLON
+
+idinsert : ID{
+    
+    struct SymbolTableEntry * search=lookup($1,scope,true);
+    if(search!=NULL){
+        char message[30]="Variable Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        $$=typeBuffer;
+        struct SymbolTableEntry*new_entry=insertIdentifier($1,CLASS[3],typeBuffer,pointerLen,yylinenumber,scope);
+        pointerLen = 1;
+    }
+}
+idlook : ID{
+        struct SymbolTableEntry * found=lookup($1,scope,false);
+        if(found==NULL){
+            char const errorMessage[100]="Variable Not Declared!!";
+            int a=yyerror(errorMessage);
+            return -1;
+        }
+        else{
+            $$ = found->dataType;
+            update(found,yylinenumber);
+        }
+     }
+PTR_STAR : PTR_STAR MUL {  
+     pointerLen++;
+} | MUL 
 PTR_TYPE : userDefDataType ID | type | VOID 
 PTR_EXP : OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK MALLOC OPEN_BRACK SIZEOF OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK CLOSE_BRACK 
         | OPEN_BRACK PTR_TYPE PTR_STAR CLOSE_BRACK MALLOC OPEN_BRACK SIZEOF OPEN_BRACK PTR_TYPE CLOSE_BRACK CLOSE_BRACK
