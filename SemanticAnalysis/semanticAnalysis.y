@@ -18,7 +18,7 @@
 
 
     //Datatypes
-    char datatypesArray[][20]={"int","char","float"};
+    char datatypesArray[][20]={"int","char","float","string"};
     char CLASS[][20]={"variable","function","array","pointer","struct","union"};
     int checkCompartibility(char *a,char *b){
         if(strcmp(a,datatypesArray[0])==0 && strcmp(b,datatypesArray[0])==0){
@@ -67,6 +67,7 @@
         struct lines *  tail; //tail of the linenumbers of reference list
         int noOfParams;
         char ** paraList;
+        char * paraTypes;
 
         int symIndex;
     };
@@ -139,6 +140,8 @@
         new_entrydst->noOfParams=-1;
         new_entry->paraList=NULL;
         new_entrydst->paraList=NULL;
+        new_entry->paraTypes=NULL;
+        new_entrydst->paraTypes=NULL;
 
         new_entrydst->symIndex=stIterator;
         new_entry->symIndex=stIterator;
@@ -189,6 +192,9 @@
         new_entry->head->next = NULL;
         new_entrydst->head->next =NULL;
 
+        new_entry->paraTypes=NULL;
+        new_entrydst->paraTypes=NULL;
+
         new_entry->tail = new_entry->head;
         new_entrydst->tail = new_entrydst->head;
 
@@ -217,7 +223,7 @@
         return new_entry;
     }
 
-    struct SymbolTableEntry* insertFunction(char* key,char * type,char * dataType,int dimension,int linenumber,int scope,int params,char ** parList) {
+    struct SymbolTableEntry* insertFunction(char* key,char * type,char * dataType,int dimension,int linenumber,int scope,int params,char parList[20][20],char paraTypes[20]) {
         int index = hashfunction(key);
 
         // Create a new entry
@@ -265,11 +271,23 @@
             new_entry->paraList[i]=(char *)malloc(20*sizeof(char));
             strcpy(new_entry->paraList[i],parList[i]);
         }
+        
         new_entrydst->paraList=(char **)malloc(sizeof(char*)*params);
         for(int i=0;i<params;i++){
             new_entrydst->paraList[i]=(char *)malloc(20*sizeof(char));
             strcpy(new_entrydst->paraList[i],parList[i]);
         }
+
+        new_entry->paraTypes=(char *)malloc(sizeof(char)*params);
+        for(int i=0;i<params;i++){
+            new_entry->paraTypes[i]=paraTypes[i];
+        }
+
+        new_entrydst->paraTypes=(char *)malloc(sizeof(char)*params);
+        for(int i=0;i<params;i++){
+            new_entrydst->paraTypes[i]=paraTypes[i];
+        }
+
         new_entrydst->symIndex=stIterator;
         new_entry->symIndex=stIterator;
 
@@ -342,6 +360,18 @@
     
     //To store type
     char typeBuffer[10];
+    char IDBuffer[30];
+
+    char funTypeBuffer[30];
+    char funNameBuffer[30];
+
+    //Global Variables for func parameters
+    int noOfParameters=0;
+    char PL[20][20];
+    char PTL[20];
+
+    struct SymbolTableEntry * forFunc;
+    char pt;
 
     //start globalVarDec startGlobal DG optionsG main mainParameters start1 varDec D options header newHeader file Exp function_declaration function_call function_defn parameter_list choice item params for while varDecF ExpF print printExpr printArguments printContent scanf scanfArguments scanfContent scanfExpr dimension BOX BALANCED_BRACK arrayElement arrayInitial arrayDeclr arrayAsAParameter arrayParams_unend higherDimention pointerAsAParameter PTR_DECLR PTR_EXP PTR_INITIAL PTR_STAR PTR_TYPE switch switchcase default comp ifElseLadder matched S elif unmatched userDefDataType userTypeDeclaration userTypeDefination userTypeInitialization userTypeObj userTypeParams
 %}
@@ -350,11 +380,11 @@
     char * value;
     char * type;
 }
+%type<type> type choice item
+%token<type> TYPE INTEGER STRING FLOATING_NUM CHAR_CONST
+%token<value> ID FUN_START
 
-%token<type> TYPE INTEGER
-%token<value> ID
-
-%token INCLUDE PREDEF_HEADER STRING ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE STRUCT UNION RETURN FLOATING_NUM SL_COMMENT ML_COMMENT CHAR_CONST EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN FUN_START COLON DEFAULT VOID MALLOC SIZEOF TYPEDEF DOT ARROW
+%token INCLUDE PREDEF_HEADER  ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE STRUCT UNION RETURN  SL_COMMENT ML_COMMENT  EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN COLON DEFAULT VOID MALLOC SIZEOF TYPEDEF DOT ARROW
 
 %right XOR_ET OR_ET AND_ET
 %right PLUS_ET MINUS_ET MUL_ET DIV_ET EQUALTO
@@ -396,6 +426,8 @@ start1: varDec |print | scanf | function_call |  while | for
 
 type : TYPE {
             strcpy(typeBuffer,$1);
+            $$=malloc(strlen($1)+1);
+            strcpy($$,$1);
         }
 varDec : type id options D SEMICOLON start1 
          | ID{
@@ -441,7 +473,7 @@ id: ID {
         return -1;
     }
     else{
-        struct SymbolTableEntry*new_entry=insertIdentifier($1,CLASS[0],typeBuffer,1,yylinenumber,scope);
+        struct SymbolTableEntry*new_entry=insertIdentifier($1,CLASS[0],typeBuffer,0,yylinenumber,scope);
     }
 }
 
@@ -489,17 +521,234 @@ Exp: OPEN_BRACK Exp CLOSE_BRACK
      | INTEGER | CHAR_CONST
 
 function_defn : function_declaration open_flower start1 close_flower startGlobal 
-function_declaration: FUN_START parameter_list CLOSE_BRACK 
-                      | FUN_START CLOSE_BRACK 
-parameter_list: parameter_list COMMA type ID choice
+function_declaration: fun_start parameter_list CLOSE_BRACK{
+    struct SymbolTableEntry * entry = lookup(funNameBuffer,1,true);
+    if(entry!=NULL){
+        char message[40]="Function name is Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    struct SymbolTableEntry* new_entry = insertFunction(funNameBuffer,CLASS[1],funTypeBuffer,0,yylinenumber,scope,noOfParameters,PL,PTL);
+    noOfParameters=0;
+}
+                      | fun_start CLOSE_BRACK {
+                        struct SymbolTableEntry * entry = lookup(funNameBuffer,1,true);
+                        if(entry!=NULL){
+                            char message[40]="Function name is Already Declared";
+                            int res=yyerror(message);
+                            return -1;
+                        }
+                        struct SymbolTableEntry* new_entry = insertFunction(funNameBuffer,CLASS[1],funTypeBuffer,0,yylinenumber,scope,noOfParameters,PL,PTL);
+                        noOfParameters=0;
+                      }
+parameter_list: parameter_list COMMA type ID choice{
+    char flag;
+    if(strcmp($5,"array")==0){
+        flag='a';
+    }
+    else{
+        flag='v';
+    }
+    char T[10];
+    if(flag=='a'){
+        strcpy(T,CLASS[0]);
+    }
+    else{
+        strcpy(T,CLASS[2]);
+    }
+    struct SymbolTableEntry * search=lookup($4,scope+1,true);
+    if(search!=NULL){
+        char message[30]="Variable Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        struct SymbolTableEntry*new_entry = insertIdentifier($4,T,$3,0,yylinenumber,scope+1);
+    }
+    strcpy(PL[noOfParameters],$3);
+    // printf("%s ",PL[noOfParameters]);
+    PTL[noOfParameters]=flag;
+    noOfParameters++;
+}
                 | parameter_list COMMA pointerAsAParameter
                 | pointerAsAParameter
-                | type ID choice
-choice : arrayAsAParameter | 
-function_call : ID OPEN_BRACK params CLOSE_BRACK SEMICOLON start1 
-                | ID OPEN_BRACK CLOSE_BRACK SEMICOLON start1 
-params : item | params COMMA item 
-item : ID | INTEGER | STRING | CHAR_CONST | FLOATING_NUM 
+                | type ID choice {
+                    printf("%s %s %s\n",$1,$2,$3);
+                    struct SymbolTableEntry * search=lookup($2,scope+1,true);
+                    if(search!=NULL){
+                        char message[30]="Variable Already Declared";
+                        int res=yyerror(message);
+                        return -1;
+                    }
+                    else{
+                        struct SymbolTableEntry*new_entry = insertIdentifier($2,$3,$1,0,yylinenumber,scope+1);
+                    }
+                    strcpy(PL[noOfParameters],$1);
+                    // printf("%s %d",PL[noOfParameters],noOfParameters);
+                    PTL[noOfParameters]='v';
+                    noOfParameters++;
+                }
+choice : arrayAsAParameter {$$=malloc(strlen("array")+1);strcpy($$,"array");} | {$$=malloc(strlen("variable")+1);strcpy($$,"variable");}
+
+
+function_call : funName OPEN_BRACK params CLOSE_BRACK{
+    int nop=forFunc->noOfParams;
+    printf("%d %d",nop,noOfParameters);
+    if(noOfParameters!=nop){
+        char message[50]="No of Parameters of the Function Does not match";
+        int res=yyerror(message);
+        return -1;
+    }
+    // char temp[20];
+    // char t;
+    // for(int i=0;i<nop/2;i++){
+    //     strcpy(temp,PL[i]);
+    //     strcpy(PL[i],PL[nop-i-1]);
+    //     strcpy(PL[nop-i-1],temp);
+    //     t=PTL[i];
+    //     PTL[i]=PTL[nop-i-1];
+    //     PTL[nop-i-1]=t;
+    // }
+
+    for(int i=0;i<nop;i++){
+        if(strcmp(PL[i],forFunc->paraList[i])!=0){
+            char message[50]="DataTypes of Parameters did not match";
+            int res=yyerror(message);
+            return -1;
+        }
+    }
+    
+    for(int i=0;i<nop;i++){
+        if(PTL[i]!=forFunc->paraTypes[i]){
+            char message[50]="Type(Class) of Parameters did not match";
+            int res=yyerror(message);
+            return -1;
+        }
+    }
+} SEMICOLON start1 
+                | funName OPEN_BRACK CLOSE_BRACK{
+                    int nop=forFunc->noOfParams;
+                    
+                    if(noOfParameters!=nop){
+                        char message[50]="No of Parameters of the Function Does not match";
+                        int res=yyerror(message);
+                        return -1;
+                    }
+                    char temp[20];
+                    char t;
+                    for(int i=0;i<nop/2;i++){
+                        strcpy(temp,PL[i]);
+                        strcpy(PL[i],PL[nop-i-1]);
+                        strcpy(PL[nop-i-1],temp);
+                        t=PTL[i];
+                        PTL[i]=PTL[nop-i-1];
+                        PTL[nop-i-1]=t;
+                    }
+
+                    for(int i=0;i<nop;i++){
+                        if(strcmp(PTL[i],forFunc->paraList[i])!=0){
+                            char message[40]="DataTypes of Parameters did not match";
+                            int res=yyerror(message);
+                            return -1;
+                        }
+                    }
+
+                    for(int i=0;i<nop;i++){
+                        if(PTL[i]!=forFunc->paraTypes[i]){
+                            char message[40]="Type(Class) of Parameters did not match";
+                            int res=yyerror(message);
+                            return -1;
+                        }
+                    }
+                } SEMICOLON start1 
+
+funName: ID{
+    forFunc = lookup($1,1,true);
+    if(forFunc==NULL){
+        char message[40]="Function is not Declared/Defined";
+        int res=yyerror(message);
+        return -1;
+    }
+    else if(strcmp(forFunc->type,CLASS[1])!=0){
+        char message[40]="Function is not Declared/Defined";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        //Update line number
+        update(forFunc,yylinenumber);
+    }
+}
+params : item {
+    strcpy(PL[noOfParameters],$1);
+    PTL[noOfParameters]=pt;
+    noOfParameters++;
+}
+        | params COMMA item {
+            strcpy(PL[noOfParameters],$3);
+            PTL[noOfParameters]=pt;
+            noOfParameters++;
+        }
+item : ID {
+    struct SymbolTableEntry * entry = lookup($1,scope,false);
+    if(entry==NULL){
+        char message[40]="Variable is not Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    if(strcmp(entry->type,CLASS[0])==0){
+        //printf("Here ");
+        pt='v';
+        update(entry,yylinenumber);
+    }
+    else if(strcmp(entry->type,CLASS[1])==0){
+        char message[40]="Variable not declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else if(strcmp(entry->type,CLASS[2])==0){
+        pt='a';
+        update(entry,yylinenumber);
+    }
+    $$=malloc(strlen(entry->dataType)+1);strcpy($$,entry->dataType);}
+    | INTEGER {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
+    | STRING {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
+    | CHAR_CONST {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
+    | FLOATING_NUM {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
+
+fun_start : FUN_START {
+    char Type[10];
+    int Index=0;
+    int i=0;
+    int yl=strlen($1);
+    for(;i<yl;i++){
+        if($1[i]!=' '){
+            Type[Index++]=$1[i];
+        }
+        else{
+            Type[Index++]='\0';
+            break;
+        }
+    }
+    strcpy(funTypeBuffer,Type);
+    while($1[i]==' '){
+        i++;
+    }
+    char iden[30];
+    Index=0;
+    for(;i<yl;i++){
+        if($1[i]!='(' && $1[i]!=' '){
+            iden[Index++]=$1[i];
+        }
+        else{
+            iden[Index++]='\0';
+            break;
+        }
+    }
+    strcpy(funNameBuffer,iden);
+    // printf("%s %s\n",funTypeBuffer,funNameBuffer);
+}
+
 
 for : FOR OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK open_flower start1 close_flower start1
         | FOR OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK SEMICOLON start1 

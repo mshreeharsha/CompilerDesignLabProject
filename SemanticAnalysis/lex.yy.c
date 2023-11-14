@@ -977,299 +977,301 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 #line 21 ".\\semanticAnalysis.l"
-{return FUN_START;}
+{
+    yylval.value=strdup(yytext);
+    return FUN_START;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 22 ".\\semanticAnalysis.l"
+#line 24 ".\\semanticAnalysis.l"
 {yylval.type=strdup(yytext);return TYPE;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 23 ".\\semanticAnalysis.l"
+#line 25 ".\\semanticAnalysis.l"
 {return SWITCH;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 24 ".\\semanticAnalysis.l"
+#line 26 ".\\semanticAnalysis.l"
 {return CASE;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 25 ".\\semanticAnalysis.l"
+#line 27 ".\\semanticAnalysis.l"
 {return STRUCT;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 26 ".\\semanticAnalysis.l"
+#line 28 ".\\semanticAnalysis.l"
 {return UNION;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 27 ".\\semanticAnalysis.l"
+#line 29 ".\\semanticAnalysis.l"
 {return RETURN;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 28 ".\\semanticAnalysis.l"
+#line 30 ".\\semanticAnalysis.l"
 {return PRINTF;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 29 ".\\semanticAnalysis.l"
+#line 31 ".\\semanticAnalysis.l"
 {return SCANF;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 30 ".\\semanticAnalysis.l"
+#line 32 ".\\semanticAnalysis.l"
 {return INCLUDE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 31 ".\\semanticAnalysis.l"
+#line 33 ".\\semanticAnalysis.l"
 {return PREDEF_HEADER;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 32 ".\\semanticAnalysis.l"
+#line 34 ".\\semanticAnalysis.l"
 {yylval.value=strdup(yytext);return ID;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 33 ".\\semanticAnalysis.l"
+#line 35 ".\\semanticAnalysis.l"
 {yylval.type=strdup("int");return INTEGER;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 34 ".\\semanticAnalysis.l"
-{return FLOATING_NUM;}
+#line 36 ".\\semanticAnalysis.l"
+{yylval.type=strdup("float");return FLOATING_NUM;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 35 ".\\semanticAnalysis.l"
+#line 37 ".\\semanticAnalysis.l"
 {return SL_COMMENT;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 36 ".\\semanticAnalysis.l"
+#line 38 ".\\semanticAnalysis.l"
 {return ML_COMMENT;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 37 ".\\semanticAnalysis.l"
-{return STRING;}
+#line 39 ".\\semanticAnalysis.l"
+{yylval.type=strdup("string");return STRING;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 38 ".\\semanticAnalysis.l"
-{return CHAR_CONST;}
+#line 40 ".\\semanticAnalysis.l"
+{yylval.type=strdup("char");return CHAR_CONST;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 39 ".\\semanticAnalysis.l"
+#line 41 ".\\semanticAnalysis.l"
 {return ARROW;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 40 ".\\semanticAnalysis.l"
+#line 42 ".\\semanticAnalysis.l"
 {return DOT;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 41 ".\\semanticAnalysis.l"
+#line 43 ".\\semanticAnalysis.l"
 {return EQUALTO;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 42 ".\\semanticAnalysis.l"
+#line 44 ".\\semanticAnalysis.l"
 {return OPEN_BRACK;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 43 ".\\semanticAnalysis.l"
+#line 45 ".\\semanticAnalysis.l"
 {return CLOSE_BRACK;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 44 ".\\semanticAnalysis.l"
+#line 46 ".\\semanticAnalysis.l"
 {return OPEN_FLOWER;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 45 ".\\semanticAnalysis.l"
+#line 47 ".\\semanticAnalysis.l"
 {return CLOSE_FLOWER;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 46 ".\\semanticAnalysis.l"
+#line 48 ".\\semanticAnalysis.l"
 {return OPEN_SQ;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 47 ".\\semanticAnalysis.l"
+#line 49 ".\\semanticAnalysis.l"
 {return CLOSE_SQ;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 48 ".\\semanticAnalysis.l"
+#line 50 ".\\semanticAnalysis.l"
 {return AMPERSAND;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 49 ".\\semanticAnalysis.l"
+#line 51 ".\\semanticAnalysis.l"
 {return UNARY_OP;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 50 ".\\semanticAnalysis.l"
+#line 52 ".\\semanticAnalysis.l"
 {return PLUS;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 51 ".\\semanticAnalysis.l"
+#line 53 ".\\semanticAnalysis.l"
 {return MINUS;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 52 ".\\semanticAnalysis.l"
+#line 54 ".\\semanticAnalysis.l"
 {return MUL;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 53 ".\\semanticAnalysis.l"
+#line 55 ".\\semanticAnalysis.l"
 {return DIV;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 54 ".\\semanticAnalysis.l"
+#line 56 ".\\semanticAnalysis.l"
 {return MOD;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 55 ".\\semanticAnalysis.l"
+#line 57 ".\\semanticAnalysis.l"
 {return OR;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 56 ".\\semanticAnalysis.l"
+#line 58 ".\\semanticAnalysis.l"
 {return AND;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 57 ".\\semanticAnalysis.l"
+#line 59 ".\\semanticAnalysis.l"
 {return NOT;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 58 ".\\semanticAnalysis.l"
+#line 60 ".\\semanticAnalysis.l"
 {return BIT_OR;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 59 ".\\semanticAnalysis.l"
+#line 61 ".\\semanticAnalysis.l"
 {return BIT_XOR;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 60 ".\\semanticAnalysis.l"
+#line 62 ".\\semanticAnalysis.l"
 {return ISEQUALTO;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 61 ".\\semanticAnalysis.l"
+#line 63 ".\\semanticAnalysis.l"
 {return LTE;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 62 ".\\semanticAnalysis.l"
+#line 64 ".\\semanticAnalysis.l"
 {return GTE;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 63 ".\\semanticAnalysis.l"
+#line 65 ".\\semanticAnalysis.l"
 {return NE;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 64 ".\\semanticAnalysis.l"
+#line 66 ".\\semanticAnalysis.l"
 {return LT;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 65 ".\\semanticAnalysis.l"
+#line 67 ".\\semanticAnalysis.l"
 {return GT;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 66 ".\\semanticAnalysis.l"
+#line 68 ".\\semanticAnalysis.l"
 {return OR_ET;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 67 ".\\semanticAnalysis.l"
+#line 69 ".\\semanticAnalysis.l"
 {return AND_ET;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 68 ".\\semanticAnalysis.l"
+#line 70 ".\\semanticAnalysis.l"
 {return XOR_ET;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 69 ".\\semanticAnalysis.l"
+#line 71 ".\\semanticAnalysis.l"
 {return PLUS_ET;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 70 ".\\semanticAnalysis.l"
+#line 72 ".\\semanticAnalysis.l"
 {return MINUS_ET;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 71 ".\\semanticAnalysis.l"
+#line 73 ".\\semanticAnalysis.l"
 {return MUL_ET;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 72 ".\\semanticAnalysis.l"
+#line 74 ".\\semanticAnalysis.l"
 {return DIV_ET;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 73 ".\\semanticAnalysis.l"
+#line 75 ".\\semanticAnalysis.l"
 {return SEMICOLON;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 74 ".\\semanticAnalysis.l"
+#line 76 ".\\semanticAnalysis.l"
 {return COMMA;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 75 ".\\semanticAnalysis.l"
+#line 77 ".\\semanticAnalysis.l"
 {return COLON;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 76 ".\\semanticAnalysis.l"
+#line 78 ".\\semanticAnalysis.l"
 {++yylinenumber;};
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 77 ".\\semanticAnalysis.l"
+#line 79 ".\\semanticAnalysis.l"
 ;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 78 ".\\semanticAnalysis.l"
+#line 80 ".\\semanticAnalysis.l"
 {return *yytext;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 79 ".\\semanticAnalysis.l"
+#line 81 ".\\semanticAnalysis.l"
 ECHO;
 	YY_BREAK
-#line 1273 "lex.yy.c"
+#line 1275 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2155,7 +2157,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 79 ".\\semanticAnalysis.l"
+#line 81 ".\\semanticAnalysis.l"
 
 
 int yywrap(){
