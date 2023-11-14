@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 
-void d(int s)
+void d(char *s)
 {
-    return 1;
+    
 }
 
 

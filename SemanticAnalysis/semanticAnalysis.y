@@ -508,7 +508,7 @@ varDec : type id options D SEMICOLON start1
             }
             for(int i =0;i<dimit;i++)
             {
-                if(entry->dimSize[i] <= dimbuffer[i] || dimbuffer[i] < 0)
+                if(dimbuffer[i] != 10000 && entry->dimSize[i] <= dimbuffer[i] || dimbuffer[i] < 0)
                 {
                     char const errorMessage[100]="Invalid Access";
                     int a=yyerror(errorMessage);
@@ -516,6 +516,28 @@ varDec : type id options D SEMICOLON start1
                 }
             }
             dimit = 0;
+        } start1
+        | ID{
+            struct SymbolTableEntry * search=lookup($1,scope,false);
+            if(search==NULL){
+                char message[30]="Variable Not Declared";
+                int res=yyerror(message);
+                return -1;
+            }
+            else{
+                update(search,yylinenumber);
+            }
+        } UNARY_OP SEMICOLON start1
+        | UNARY_OP ID SEMICOLON{
+            struct SymbolTableEntry * search=lookup($2,scope,false);
+            if(search==NULL){
+                char message[30]="Variable Not Declared";
+                int res=yyerror(message);
+                return -1;
+            }
+            else{
+                update(search,yylinenumber);
+            }
         } start1
 
 D : COMMA id options D | 
@@ -574,7 +596,6 @@ Exp: OPEN_BRACK Exp CLOSE_BRACK
      | INTEGER | CHAR_CONST
 
 id3 : ID{
-
     struct SymbolTableEntry * found=lookup($1,scope,false);
         strcpy(IDBuffer,$1);
         if(found==NULL){
@@ -586,7 +607,6 @@ id3 : ID{
             update(found,yylinenumber);
         }
     }
-  
 
 function_defn : function_declaration open_flower start1 close_flower startGlobal 
 function_declaration: fun_start parameter_list CLOSE_BRACK{
@@ -701,6 +721,7 @@ function_call : funName OPEN_BRACK params CLOSE_BRACK{
     }
     
     for(int i=0;i<nop;i++){
+        if((PTL[i]=='a' && forFunc->paraTypes[i]=='p') || (PTL[i]=='p' && forFunc->paraTypes[i]=='a'))continue;
         if(PTL[i]!=forFunc->paraTypes[i]){
             char message[40]="Type(Class) of Parameters did not match";
             int res=yyerror(message);
@@ -746,7 +767,9 @@ function_call : funName OPEN_BRACK params CLOSE_BRACK{
                     }
 
                     for(int i=0;i<nop;i++){
+                        if((PTL[i]=='a' && forFunc->paraTypes[i]=='p') || (PTL[i]=='p' && forFunc->paraTypes[i]=='a'))continue;
                         if(PTL[i]!=forFunc->paraTypes[i]){
+            
                             char message[40]="Type(Class) of Parameters did not match";
                             int res=yyerror(message);
                             return -1;
@@ -781,6 +804,7 @@ function_call1 : funName OPEN_BRACK params CLOSE_BRACK{
     }
     
     for(int i=0;i<nop;i++){
+        if((PTL[i]=='a' && forFunc->paraTypes[i]=='p') || (PTL[i]=='p' && forFunc->paraTypes[i]=='a'))continue;
         if(PTL[i]!=forFunc->paraTypes[i]){
             char message[40]="Type(Class) of Parameters did not match";
             int res=yyerror(message);
@@ -826,6 +850,7 @@ function_call1 : funName OPEN_BRACK params CLOSE_BRACK{
                     }
 
                     for(int i=0;i<nop;i++){
+                        if((PTL[i]=='a' && forFunc->paraTypes[i]=='p') || (PTL[i]=='p' && forFunc->paraTypes[i]=='a'))continue;
                         if(PTL[i]!=forFunc->paraTypes[i]){
                             char message[40]="Type(Class) of Parameters did not match";
                             int res=yyerror(message);
@@ -937,18 +962,32 @@ fun_start : FUN_START {
 }
 
 
-for : FOR OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK open_flower start1 close_flower start1
-        | FOR OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK SEMICOLON start1 
-        | FOR OPEN_BRACK SEMICOLON ExpF SEMICOLON ExpF CLOSE_BRACK open_flower start1 close_flower start1
-        | FOR OPEN_BRACK SEMICOLON ExpF SEMICOLON ExpF CLOSE_BRACK SEMICOLON start1 
+for : forScope OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK OPEN_FLOWER start1 close_flower start1
+        | forScope OPEN_BRACK varDecF ExpF SEMICOLON ExpF CLOSE_BRACK SEMICOLON start1 
+        | forScope OPEN_BRACK SEMICOLON ExpF SEMICOLON ExpF CLOSE_BRACK open_flower start1 close_flower start1
+        | forScope OPEN_BRACK SEMICOLON ExpF SEMICOLON ExpF CLOSE_BRACK SEMICOLON start1 
+
+forScope : FOR {scope++;}
 
 while : WHILE OPEN_BRACK ExpF CLOSE_BRACK open_flower start1 close_flower start1
         | WHILE OPEN_BRACK ExpF CLOSE_BRACK SEMICOLON start1
 
-varDecF : type ID options D SEMICOLON 
-         | ID options D SEMICOLON 
+varDecF : type idFor options D SEMICOLON 
+         | idFor options D SEMICOLON 
 
 ExpF : Exp | 
+
+idFor:ID {
+    struct SymbolTableEntry * search=lookup($1,scope,false);
+    if(search!=NULL){
+        char message[30]="Variable Already Declared";
+        int res=yyerror(message);
+        return -1;
+    }
+    else{
+        struct SymbolTableEntry*new_entry=insertIdentifier($1,CLASS[0],typeBuffer,0,yylinenumber,scope);
+    }
+}
 
 print : PRINTF OPEN_BRACK printExpr CLOSE_BRACK SEMICOLON start1 
 printExpr : STRING 
@@ -984,10 +1023,18 @@ ID2 : ID {
         }
 
 arrayDeclr : type ID2 
-    BOX SEMICOLON {struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;}
+    BOX SEMICOLON {
+        for(int i=0;i<dimit;i++){
+            if(dimbuffer[i]<=0){
+                char message[25]="Access Denied";
+                int res=yyerror(message);
+                return -1;
+            }
+        }
+    struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;}
 BOX : BOX open_sq integer_dim CLOSE_SQ | open_sq integer_dim CLOSE_SQ
 
-integer_dim : INTEGER {dimbuffer[dimit++] = intval;}
+integer_dim : INTEGER {dimbuffer[dimit++] = intval;} | ID {dimbuffer[dimit++] = 10000;}
 arrayInitial : type ID2 BOX EQUALTO open_flower BALANCED_BRACK close_flower SEMICOLON | type ID2 BOX EQUALTO open_flower close_flower SEMICOLON
 BALANCED_BRACK : arrayParams_unend 
             | arrayParams_unend COMMA

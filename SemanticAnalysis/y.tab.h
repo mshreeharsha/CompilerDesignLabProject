@@ -39,145 +39,147 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     TYPE = 258,
-     INTEGER = 259,
-     STRING = 260,
-     FLOATING_NUM = 261,
-     CHAR_CONST = 262,
-     STRUCT = 263,
-     UNION = 264,
-     VOID = 265,
-     ID = 266,
-     FUN_START = 267,
-     INCLUDE = 268,
-     PREDEF_HEADER = 269,
-     ELIF = 270,
-     ELSE = 271,
-     IF = 272,
-     BREAK = 273,
-     NOT = 274,
-     FOR = 275,
-     CONTINUE = 276,
-     WHILE = 277,
-     SWITCH = 278,
-     CASE = 279,
-     RETURN = 280,
-     SL_COMMENT = 281,
-     ML_COMMENT = 282,
-     EQUALTO = 283,
-     OPEN_BRACK = 284,
-     OPEN_FLOWER = 285,
-     OPEN_SQ = 286,
-     CLOSE_BRACK = 287,
-     CLOSE_FLOWER = 288,
-     CLOSE_SQ = 289,
-     AND = 290,
-     UNARY_OP = 291,
-     PLUS = 292,
-     MINUS = 293,
-     DIV = 294,
-     MUL = 295,
-     MOD = 296,
-     OR = 297,
-     AMPERSAND = 298,
-     BIT_OR = 299,
-     BIT_XOR = 300,
-     SEMICOLON = 301,
-     COMMA = 302,
-     ISEQUALTO = 303,
-     LT = 304,
-     LTE = 305,
-     GT = 306,
-     GTE = 307,
-     NE = 308,
-     PLUS_ET = 309,
-     MINUS_ET = 310,
-     MUL_ET = 311,
-     DIV_ET = 312,
-     OR_ET = 313,
-     AND_ET = 314,
-     XOR_ET = 315,
-     PRINTF = 316,
-     SCANF = 317,
-     MAIN = 318,
-     COLON = 319,
-     DEFAULT = 320,
-     MALLOC = 321,
-     SIZEOF = 322,
-     TYPEDEF = 323,
-     DOT = 324,
-     ARROW = 325
+     NULLT = 258,
+     TYPE = 259,
+     INTEGER = 260,
+     STRING = 261,
+     FLOATING_NUM = 262,
+     CHAR_CONST = 263,
+     STRUCT = 264,
+     UNION = 265,
+     VOID = 266,
+     ID = 267,
+     FUN_START = 268,
+     INCLUDE = 269,
+     PREDEF_HEADER = 270,
+     ELIF = 271,
+     ELSE = 272,
+     IF = 273,
+     BREAK = 274,
+     NOT = 275,
+     FOR = 276,
+     CONTINUE = 277,
+     WHILE = 278,
+     SWITCH = 279,
+     CASE = 280,
+     RETURN = 281,
+     SL_COMMENT = 282,
+     ML_COMMENT = 283,
+     EQUALTO = 284,
+     OPEN_BRACK = 285,
+     OPEN_FLOWER = 286,
+     OPEN_SQ = 287,
+     CLOSE_BRACK = 288,
+     CLOSE_FLOWER = 289,
+     CLOSE_SQ = 290,
+     AND = 291,
+     UNARY_OP = 292,
+     PLUS = 293,
+     MINUS = 294,
+     DIV = 295,
+     MUL = 296,
+     MOD = 297,
+     OR = 298,
+     AMPERSAND = 299,
+     BIT_OR = 300,
+     BIT_XOR = 301,
+     SEMICOLON = 302,
+     COMMA = 303,
+     ISEQUALTO = 304,
+     LT = 305,
+     LTE = 306,
+     GT = 307,
+     GTE = 308,
+     NE = 309,
+     PLUS_ET = 310,
+     MINUS_ET = 311,
+     MUL_ET = 312,
+     DIV_ET = 313,
+     OR_ET = 314,
+     AND_ET = 315,
+     XOR_ET = 316,
+     PRINTF = 317,
+     SCANF = 318,
+     MAIN = 319,
+     COLON = 320,
+     DEFAULT = 321,
+     MALLOC = 322,
+     SIZEOF = 323,
+     TYPEDEF = 324,
+     DOT = 325,
+     ARROW = 326
    };
 #endif
 /* Tokens.  */
-#define TYPE 258
-#define INTEGER 259
-#define STRING 260
-#define FLOATING_NUM 261
-#define CHAR_CONST 262
-#define STRUCT 263
-#define UNION 264
-#define VOID 265
-#define ID 266
-#define FUN_START 267
-#define INCLUDE 268
-#define PREDEF_HEADER 269
-#define ELIF 270
-#define ELSE 271
-#define IF 272
-#define BREAK 273
-#define NOT 274
-#define FOR 275
-#define CONTINUE 276
-#define WHILE 277
-#define SWITCH 278
-#define CASE 279
-#define RETURN 280
-#define SL_COMMENT 281
-#define ML_COMMENT 282
-#define EQUALTO 283
-#define OPEN_BRACK 284
-#define OPEN_FLOWER 285
-#define OPEN_SQ 286
-#define CLOSE_BRACK 287
-#define CLOSE_FLOWER 288
-#define CLOSE_SQ 289
-#define AND 290
-#define UNARY_OP 291
-#define PLUS 292
-#define MINUS 293
-#define DIV 294
-#define MUL 295
-#define MOD 296
-#define OR 297
-#define AMPERSAND 298
-#define BIT_OR 299
-#define BIT_XOR 300
-#define SEMICOLON 301
-#define COMMA 302
-#define ISEQUALTO 303
-#define LT 304
-#define LTE 305
-#define GT 306
-#define GTE 307
-#define NE 308
-#define PLUS_ET 309
-#define MINUS_ET 310
-#define MUL_ET 311
-#define DIV_ET 312
-#define OR_ET 313
-#define AND_ET 314
-#define XOR_ET 315
-#define PRINTF 316
-#define SCANF 317
-#define MAIN 318
-#define COLON 319
-#define DEFAULT 320
-#define MALLOC 321
-#define SIZEOF 322
-#define TYPEDEF 323
-#define DOT 324
-#define ARROW 325
+#define NULLT 258
+#define TYPE 259
+#define INTEGER 260
+#define STRING 261
+#define FLOATING_NUM 262
+#define CHAR_CONST 263
+#define STRUCT 264
+#define UNION 265
+#define VOID 266
+#define ID 267
+#define FUN_START 268
+#define INCLUDE 269
+#define PREDEF_HEADER 270
+#define ELIF 271
+#define ELSE 272
+#define IF 273
+#define BREAK 274
+#define NOT 275
+#define FOR 276
+#define CONTINUE 277
+#define WHILE 278
+#define SWITCH 279
+#define CASE 280
+#define RETURN 281
+#define SL_COMMENT 282
+#define ML_COMMENT 283
+#define EQUALTO 284
+#define OPEN_BRACK 285
+#define OPEN_FLOWER 286
+#define OPEN_SQ 287
+#define CLOSE_BRACK 288
+#define CLOSE_FLOWER 289
+#define CLOSE_SQ 290
+#define AND 291
+#define UNARY_OP 292
+#define PLUS 293
+#define MINUS 294
+#define DIV 295
+#define MUL 296
+#define MOD 297
+#define OR 298
+#define AMPERSAND 299
+#define BIT_OR 300
+#define BIT_XOR 301
+#define SEMICOLON 302
+#define COMMA 303
+#define ISEQUALTO 304
+#define LT 305
+#define LTE 306
+#define GT 307
+#define GTE 308
+#define NE 309
+#define PLUS_ET 310
+#define MINUS_ET 311
+#define MUL_ET 312
+#define DIV_ET 313
+#define OR_ET 314
+#define AND_ET 315
+#define XOR_ET 316
+#define PRINTF 317
+#define SCANF 318
+#define MAIN 319
+#define COLON 320
+#define DEFAULT 321
+#define MALLOC 322
+#define SIZEOF 323
+#define TYPEDEF 324
+#define DOT 325
+#define ARROW 326
 
 
 
@@ -195,7 +197,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 199 "y.tab.h"
+#line 201 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

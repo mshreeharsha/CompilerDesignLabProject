@@ -6,17 +6,16 @@ int harsha(int ** ptr){
     printf("Hello\n");
 }
 
-int ddd(){
-
+int ddd(int *a){
+    return 0;
 }
 
-int d=ddd();
 
 struct aeroplane{
     int noOfWheels;
     int seats;
     char * name;
-    int arr[0];
+    int arr[10];
 };
 
 int main()
@@ -24,4 +23,16 @@ int main()
     int b=10;
     int **a=b;
     harsha(a);
+    int arr[10][10];
+    for(int i=0;i<10;i++){
+        for(int j=0;j<10;j++){
+            arr[0][0]=i+j;
+        }
+    }
+    while(b<10){
+        int sprinklr=b+25;
+        b++;
+    }
+    int ar[10];
+    int shyam=ddd(ar);
 }
