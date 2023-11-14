@@ -1,12 +1,18 @@
 #include <stdio.h>
 
-int function(int a,char b){
-    a=a+10;
+int func(int a[2][2],int b){
+    printf("%d",b);
+}
+
+int func3(int dfghj[10]){
+
 }
 
 int main(){
-    int a=10;
-    char b='a';
-    int c=20;
-    function(a,b);
+    int arr[9];
+    func(c,e);
+    int b[10];
+    int e=10;
+    int c[10][10];
+    func3(b);
 }

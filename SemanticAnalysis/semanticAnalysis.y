@@ -5,6 +5,7 @@
     extern FILE * yyin;
     extern char *yytext;
     extern int yylinenumber;
+    extern int intval;
 
     #include <string.h>
     #include <stdlib.h>
@@ -16,6 +17,12 @@
     int scope=1; //Scope of Global Variables = 1
     int stIterator=0;
 
+    int ID_dim =0 ;
+    int dimbuffer[30];
+    int dimit = 0;
+
+    int PD[20];
+    int pdi=0;
 
     //Datatypes
     char datatypesArray[][20]={"int","char","float","string"};
@@ -68,7 +75,7 @@
         int noOfParams;
         char ** paraList;
         char * paraTypes;
-
+        int * paraDim;  //Dimension of array or pointers in function
         int symIndex;
     };
 
@@ -142,6 +149,8 @@
         new_entrydst->paraList=NULL;
         new_entry->paraTypes=NULL;
         new_entrydst->paraTypes=NULL;
+        new_entry->paraDim=NULL;
+        new_entrydst->paraDim=NULL;
 
         new_entrydst->symIndex=stIterator;
         new_entry->symIndex=stIterator;
@@ -192,25 +201,31 @@
         new_entry->head->next = NULL;
         new_entrydst->head->next =NULL;
 
-        new_entry->paraTypes=NULL;
-        new_entrydst->paraTypes=NULL;
-
         new_entry->tail = new_entry->head;
         new_entrydst->tail = new_entrydst->head;
 
         new_entry->dimSize=(int *)malloc(sizeof(int)*dimension);
-        for(int i=0;i<dimension;i++){
-            new_entry->dimSize[i]=dimList[i];
+
+
+        if(dimList != NULL)
+        {        
+            for(int i=0;i<dimension;i++){
+                new_entry->dimSize[i]=dimList[i];
+            }
+
+            new_entrydst->dimSize=(int *)malloc(sizeof(int)*dimension);
+            for(int i=0;i<dimension;i++){
+                new_entrydst->dimSize[i]=dimList[i];
+            }
         }
-        new_entrydst->dimSize=(int *)malloc(sizeof(int)*dimension);
-        for(int i=0;i<dimension;i++){
-            new_entrydst->dimSize[i]=dimList[i];
-        }
+
 
         new_entry->noOfParams=-1;
         new_entrydst->noOfParams=-1;
         new_entry->paraList=NULL;
         new_entrydst->paraList=NULL;
+        new_entry->paraDim=NULL;
+        new_entrydst->paraDim=NULL;
 
         new_entrydst->symIndex=stIterator;
         new_entry->symIndex=stIterator;
@@ -286,6 +301,16 @@
         new_entrydst->paraTypes=(char *)malloc(sizeof(char)*params);
         for(int i=0;i<params;i++){
             new_entrydst->paraTypes[i]=paraTypes[i];
+        }
+
+        new_entry->paraDim=(int *)malloc(sizeof(int)*params);
+        for(int i=0;i<params;i++){
+            new_entry->paraDim[i]=PD[i];
+        }
+
+        new_entrydst->paraDim=(int *)malloc(sizeof(int)*params);
+        for(int i=0;i<params;i++){
+            new_entrydst->paraDim[i]=PD[i];
         }
 
         new_entrydst->symIndex=stIterator;
@@ -372,8 +397,12 @@
 
     struct SymbolTableEntry * forFunc;
     char pt;
+    
+    int arrayInFunc[100];
+    int dimOfArrayInFunc=0;
 
-    //start globalVarDec startGlobal DG optionsG main mainParameters start1 varDec D options header newHeader file Exp function_declaration function_call function_defn parameter_list choice item params for while varDecF ExpF print printExpr printArguments printContent scanf scanfArguments scanfContent scanfExpr dimension BOX BALANCED_BRACK arrayElement arrayInitial arrayDeclr arrayAsAParameter arrayParams_unend higherDimention pointerAsAParameter PTR_DECLR PTR_EXP PTR_INITIAL PTR_STAR PTR_TYPE switch switchcase default comp ifElseLadder matched S elif unmatched userDefDataType userTypeDeclaration userTypeDefination userTypeInitialization userTypeObj userTypeParams
+    int parD[10];
+    int parDi=0;
 %}
 
 %union{
@@ -430,17 +459,26 @@ type : TYPE {
             strcpy($$,$1);
         }
 varDec : type id options D SEMICOLON start1 
-         | ID{
-            struct SymbolTableEntry * search=lookup($1,scope,false);
-            if(search==NULL){
-                char message[30]="Variable Not Declared";
-                int res=yyerror(message);
+         | id3 options D SEMICOLON start1 
+         | id3{dimit = 0;} BOX options SEMICOLON {
+            struct SymbolTableEntry * entry=lookup(IDBuffer,scope,false);            
+            if(entry->dimension != dimit)
+            {
+                char const errorMessage[100]="Dimension doesnt match!";
+                int a=yyerror(errorMessage);
                 return -1;
             }
-            else{
-                update(search,yylinenumber);
+            for(int i =0;i<dimit;i++)
+            {
+                if(entry->dimSize[i] <= dimbuffer[i] || dimbuffer[i] < 0)
+                {
+                    char const errorMessage[100]="Invalid Access";
+                    int a=yyerror(errorMessage);
+                    return -1;
+                }
             }
-         } options D SEMICOLON start1 
+            dimit = 0;
+        } start1
 
 D : COMMA id options D | 
 options : EQUALTO Exp | EQUALTO ID{
@@ -507,8 +545,14 @@ Exp: OPEN_BRACK Exp CLOSE_BRACK
      | Exp OR_ET Exp 
      | Exp AND_ET Exp 
      | Exp XOR_ET Exp 
-     | ID {
-        struct SymbolTableEntry * found=lookup($1,scope,false);
+     | id3 {dimit = 0;}
+     | id3 {dimit = 0;} BOX 
+     | INTEGER | CHAR_CONST
+
+id3 : ID{
+
+    struct SymbolTableEntry * found=lookup($1,scope,false);
+        strcpy(IDBuffer,$1);
         if(found==NULL){
             char const errorMessage[100]="Variable Not Declared!!";
             int a=yyerror(errorMessage);
@@ -517,8 +561,8 @@ Exp: OPEN_BRACK Exp CLOSE_BRACK
         else{
             update(found,yylinenumber);
         }
-     }
-     | INTEGER | CHAR_CONST
+    }
+  
 
 function_defn : function_declaration open_flower start1 close_flower startGlobal 
 function_declaration: fun_start parameter_list CLOSE_BRACK{
@@ -550,7 +594,7 @@ parameter_list: parameter_list COMMA type ID choice{
         flag='v';
     }
     char T[10];
-    if(flag=='a'){
+    if(flag=='v'){
         strcpy(T,CLASS[0]);
     }
     else{
@@ -562,54 +606,54 @@ parameter_list: parameter_list COMMA type ID choice{
         int res=yyerror(message);
         return -1;
     }
-    else{
+    else if(strcmp(T,"variable")==0){
         struct SymbolTableEntry*new_entry = insertIdentifier($4,T,$3,0,yylinenumber,scope+1);
     }
+    else if(strcmp(T,"array")==0){
+        struct SymbolTableEntry*new_entry = insertArray($4,T,$3,dimit,yylinenumber,scope+1,dimbuffer);
+    }
+    PD[noOfParameters]=dimit;
+    dimit=0;
     strcpy(PL[noOfParameters],$3);
-    // printf("%s ",PL[noOfParameters]);
     PTL[noOfParameters]=flag;
     noOfParameters++;
 }
                 | parameter_list COMMA pointerAsAParameter
                 | pointerAsAParameter
                 | type ID choice {
-                    printf("%s %s %s\n",$1,$2,$3);
                     struct SymbolTableEntry * search=lookup($2,scope+1,true);
                     if(search!=NULL){
                         char message[30]="Variable Already Declared";
                         int res=yyerror(message);
                         return -1;
                     }
-                    else{
+                    else if(strcmp($3,"variable")==0){
                         struct SymbolTableEntry*new_entry = insertIdentifier($2,$3,$1,0,yylinenumber,scope+1);
                     }
+                    else if(strcmp($3,"array")==0){
+                        struct SymbolTableEntry*new_entry = insertArray($2,$3,$1,dimit,yylinenumber,scope+1,dimbuffer);
+                    }
+                    PD[noOfParameters]=dimit;
+                    dimit=0;
                     strcpy(PL[noOfParameters],$1);
-                    // printf("%s %d",PL[noOfParameters],noOfParameters);
-                    PTL[noOfParameters]='v';
+                    if(strcmp($3,"array")==0)PTL[noOfParameters]='a';
+                    else if(strcmp($3,"variable")==0) PTL[noOfParameters]='v';
                     noOfParameters++;
                 }
-choice : arrayAsAParameter {$$=malloc(strlen("array")+1);strcpy($$,"array");} | {$$=malloc(strlen("variable")+1);strcpy($$,"variable");}
+choice : arrayAsAParameter {
+    $$=malloc(strlen("array")+1);strcpy($$,"array");
+
+    } | {$$=malloc(strlen("variable")+1);strcpy($$,"variable");}
 
 
 function_call : funName OPEN_BRACK params CLOSE_BRACK{
     int nop=forFunc->noOfParams;
-    printf("%d %d",nop,noOfParameters);
     if(noOfParameters!=nop){
         char message[50]="No of Parameters of the Function Does not match";
         int res=yyerror(message);
         return -1;
     }
-    // char temp[20];
-    // char t;
-    // for(int i=0;i<nop/2;i++){
-    //     strcpy(temp,PL[i]);
-    //     strcpy(PL[i],PL[nop-i-1]);
-    //     strcpy(PL[nop-i-1],temp);
-    //     t=PTL[i];
-    //     PTL[i]=PTL[nop-i-1];
-    //     PTL[nop-i-1]=t;
-    // }
-
+ 
     for(int i=0;i<nop;i++){
         if(strcmp(PL[i],forFunc->paraList[i])!=0){
             char message[50]="DataTypes of Parameters did not match";
@@ -620,11 +664,21 @@ function_call : funName OPEN_BRACK params CLOSE_BRACK{
     
     for(int i=0;i<nop;i++){
         if(PTL[i]!=forFunc->paraTypes[i]){
-            char message[50]="Type(Class) of Parameters did not match";
+            char message[40]="Type(Class) of Parameters did not match";
             int res=yyerror(message);
             return -1;
         }
     }
+
+    for(int i=0;i<nop;i++){
+        if(parD[i]!=forFunc->paraDim[i]){
+            char message[40]="Dimension does not match";
+            int res=yyerror(message);
+            return -1;
+        }
+    }
+    parDi=0;
+    noOfParameters=0;
 } SEMICOLON start1 
                 | funName OPEN_BRACK CLOSE_BRACK{
                     int nop=forFunc->noOfParams;
@@ -660,6 +714,16 @@ function_call : funName OPEN_BRACK params CLOSE_BRACK{
                             return -1;
                         }
                     }
+                    for(int i=0;i<nop;i++){
+                        if(parD[i]!=forFunc->paraDim[i]){
+                            char message[40]="Dimension does not match";
+                            int res=yyerror(message);
+                            return -1;
+                        }
+                    }
+
+                    parDi=0;
+                    noOfParameters=0;
                 } SEMICOLON start1 
 
 funName: ID{
@@ -697,8 +761,8 @@ item : ID {
         return -1;
     }
     if(strcmp(entry->type,CLASS[0])==0){
-        //printf("Here ");
         pt='v';
+        parD[parDi++]=entry->dimension;
         update(entry,yylinenumber);
     }
     else if(strcmp(entry->type,CLASS[1])==0){
@@ -708,13 +772,14 @@ item : ID {
     }
     else if(strcmp(entry->type,CLASS[2])==0){
         pt='a';
+        parD[parDi++]=entry->dimension;
         update(entry,yylinenumber);
     }
     $$=malloc(strlen(entry->dataType)+1);strcpy($$,entry->dataType);}
-    | INTEGER {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
-    | STRING {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
-    | CHAR_CONST {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
-    | FLOATING_NUM {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';}
+    | INTEGER {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';parD[parDi++]=0;}
+    | STRING {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';parD[parDi++]=0;}
+    | CHAR_CONST {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';parD[parDi++]=0;}
+    | FLOATING_NUM {$$=malloc(strlen($1)+1);strcpy($$,$1);pt='v';parD[parDi++]=0;}
 
 fun_start : FUN_START {
     char Type[10];
@@ -746,7 +811,6 @@ fun_start : FUN_START {
         }
     }
     strcpy(funNameBuffer,iden);
-    // printf("%s %s\n",funTypeBuffer,funNameBuffer);
 }
 
 
@@ -779,11 +843,29 @@ scanfArguments : COMMA AMPERSAND ID scanfArguments
 scanfContent : ID | arrayElement
 
 arrayElement : ID dimension
-dimension : OPEN_SQ Exp CLOSE_SQ dimension | OPEN_SQ Exp CLOSE_SQ
+dimension : open_sq Exp CLOSE_SQ dimension | open_sq Exp CLOSE_SQ
 
-arrayDeclr : type ID BOX SEMICOLON
-BOX : BOX OPEN_SQ INTEGER CLOSE_SQ | OPEN_SQ INTEGER CLOSE_SQ
-arrayInitial : type ID BOX EQUALTO open_flower BALANCED_BRACK close_flower SEMICOLON | type ID BOX EQUALTO open_flower close_flower SEMICOLON
+open_sq : OPEN_SQ{ID_dim++;}
+
+ID2 : ID {
+        struct SymbolTableEntry * found=lookup($1,scope,true);
+        if(found != NULL)
+        {
+            char const errorMessage[100]="Variable Already Declared!!";
+            int a=yyerror(errorMessage);
+            return -1;
+        }
+
+        strcpy(IDBuffer,$1);
+
+        }
+
+arrayDeclr : type ID2 
+    BOX SEMICOLON {struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;}
+BOX : BOX open_sq integer_dim CLOSE_SQ | open_sq integer_dim CLOSE_SQ
+
+integer_dim : INTEGER {dimbuffer[dimit++] = intval;}
+arrayInitial : type ID2 BOX EQUALTO open_flower BALANCED_BRACK close_flower SEMICOLON | type ID2 BOX EQUALTO open_flower close_flower SEMICOLON
 BALANCED_BRACK : arrayParams_unend 
             | arrayParams_unend COMMA
             | arrayParams_unend COMMA open_flower BALANCED_BRACK close_flower COMMA BALANCED_BRACK
@@ -794,7 +876,7 @@ BALANCED_BRACK : arrayParams_unend
             | open_flower BALANCED_BRACK close_flower COMMA BALANCED_BRACK
 arrayParams_unend : INTEGER | arrayParams_unend COMMA INTEGER 
 
-arrayAsAParameter : OPEN_SQ CLOSE_SQ higherDimention
+arrayAsAParameter : OPEN_SQ integer_dim CLOSE_SQ higherDimention
 higherDimention : BOX | 
 
 pointerAsAParameter : PTR_TYPE PTR_STAR ID
