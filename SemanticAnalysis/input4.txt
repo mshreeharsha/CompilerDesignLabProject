@@ -1,0 +1,9 @@
+#include <stdio.h>
+
+int main(){
+    int a;
+    for(;a<10;++a){
+        a++;
+    }
+    a=20;
+}

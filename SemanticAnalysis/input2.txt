@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+int b=10,c=10;
+
+int harsha(int ** ptr){
+    printf("Hello\n");
+}
+
+int ddd(int *a){
+    return 0;
+}
+
+
+struct aeroplane{
+    int noOfWheels;
+    int seats;
+    char * name;
+    int arr[10];
+};
+
+int main()
+{
+    int b=10;
+    int **a=b;
+    harsha(a);
+    int arr[10][10];
+    for(int i=0;i<10;i++){
+        for(int j=0;j<10;j++){
+            arr[i][j]=i+j;
+        }
+    }
+    while(b<10){
+        int sprinklr=b+25;
+        b++;
+    }
+    int ar[10];
+    int shyam=ddd(ar);
+}

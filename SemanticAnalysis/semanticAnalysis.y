@@ -439,7 +439,7 @@
 %left OPEN_BRACK CLOSE_BRACK
 
 %%
-start: header startGlobal main {printf("Syntax is Correct\n");return;}
+start: header startGlobal main {printf("\n\nSyntax is Correct\n");return;}
 header: INCLUDE file newHeader 
 newHeader: header | 
 file : STRING | PREDEF_HEADER 
@@ -482,7 +482,7 @@ idgl: ID {
             }
          } 
 
-main: MAIN mainParameters CLOSE_BRACK open_flower  start1 close_flower
+main: MAIN mainParameters CLOSE_BRACK{noOfParameters=0;} open_flower  start1 close_flower
 mainParameters : parameter_list |
 
 start1: varDec |print | scanf | function_call |  while | for
@@ -677,6 +677,7 @@ parameter_list: parameter_list COMMA type ID choice{
                     strcpy(PL[noOfParameters],$1);
                     PTL[noOfParameters]='p';
                     noOfParameters++;
+                    pointerLen=1;
                 }
                 | type ID choice {
                     struct SymbolTableEntry * search=lookup($2,scope+1,true);
@@ -978,7 +979,7 @@ varDecF : type idFor options D SEMICOLON
 ExpF : Exp | 
 
 idFor:ID {
-    struct SymbolTableEntry * search=lookup($1,scope,false);
+    struct SymbolTableEntry * search=lookup($1,scope,true);
     if(search!=NULL){
         char message[30]="Variable Already Declared";
         int res=yyerror(message);
@@ -1167,11 +1168,12 @@ userTypeInitialization : structInStruct EQUALTO open_flower params close_flower 
                                     int res=yyerror(message);
                                 return -1;
                                 }
-                            if(strcmp(search->dataType,search1->dataType)!=0){
-                                    char message[30]="Varible Type Mismatch!!";
-                                    int res=yyerror(message);
-                                    return -1;
-                            }
+                                if(strcmp(search->dataType,search1->dataType)!=0){
+                                        char message[30]="Varible Type Mismatch!!";
+                                        int res=yyerror(message);
+                                        return -1;
+                                }
+                                update(search,yylinenumber);
                             }
                         } EQUALTO item SEMICOLON
                         | ID ARROW ID{
@@ -1188,12 +1190,13 @@ userTypeInitialization : structInStruct EQUALTO open_flower params close_flower 
                                     int res=yyerror(message);
                                 return -1;
                                 }
-                            if(strcmp(search->dataType,search1->dataType)!=0){
-                                    char message[30]="Varible Type Mismatch!!";
-                                    int res=yyerror(message);
-                                    return -1;
+                                if(strcmp(search->dataType,search1->dataType)!=0){
+                                        char message[30]="Varible Type Mismatch!!";
+                                        int res=yyerror(message);
+                                        return -1;
+                                }
                             }
-                            }
+                            update(search,yylinenumber);
                         } EQUALTO item SEMICOLON
 
 userDefDataType : STRUCT {
@@ -1291,13 +1294,13 @@ int main(){
     yyin=fopen("input.txt","r");
     yyparse();
     printf("\n\nSYMBOL TABLE\n\n");
-    printf("%-15s %-10s %-15s %-15s %-15s %-15s %-15s %-20s\n", "ID", "Type", "Data Type","Dim","Scope","No of Params","Line of Decl","Line of Ref");
+    printf("%-3s %-15s %-15s %-20s %-10s %-10s %-15s %-15s %-20s\n","No.","ID", "Type", "Data Type","Dim","Scope","No of Params","Line of Decl","Line of Ref");
     printf("------------------------------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < stIterator; i++) {
         printf("%d ",i);
         struct SymbolTableEntry * entry = Table.symTable[i];
-        printf("%-15s %-10s %-15s %-15d %-15d %-15d %-15d [ ", entry->name, entry->type, entry->dataType,entry->dimension,entry->scope,entry->noOfParams,entry->lineOfDeclaration);
+        printf("%-15s %-15s %-20s %-10d %-10d %-15d %-15d [ ", entry->name, entry->type, entry->dataType,entry->dimension,entry->scope,entry->noOfParams,entry->lineOfDeclaration);
         struct lines* h = entry->head->next;
         while(h){
             printf("%d ", h->lineno);
