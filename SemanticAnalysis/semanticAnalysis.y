@@ -16,8 +16,6 @@
     //Scope Number
     int scope=1; //Scope of Global Variables = 1
     int stIterator=0;
-
-    int ID_dim =0 ;
     int dimbuffer[30];
     int dimit = 0;
 
@@ -457,7 +455,7 @@ optionsG : EQUALTO Exp | EQUALTO function_call1{
         int a=yyerror(errorMessage);
         return -1;
     }
-} |
+} | EQUALTO printVar |
 
 idgi : ID {
     struct SymbolTableEntry * search=lookup($1,1,true);
@@ -547,7 +545,7 @@ options : EQUALTO Exp | EQUALTO function_call1{
         int a=yyerror(errorMessage);
         return -1;
     }
-} | 
+} | EQUALTO printVar | EQUALTO scanfVar | 
 
 id: ID {
     struct SymbolTableEntry * search=lookup($1,scope,true);
@@ -592,7 +590,16 @@ Exp: OPEN_BRACK Exp CLOSE_BRACK
      | Exp AND_ET Exp 
      | Exp XOR_ET Exp 
      | id3 {dimit = 0;}
-     | id3 {dimit = 0;} BOX 
+     | id3 {dimit = 0;} BOX {
+    struct SymbolTableEntry * found=lookup(IDBuffer,scope,false);
+    if(dimit!=found->dimension){
+        char const errorMessage[100]="Dimension does Not match!!";
+            int a=yyerror(errorMessage);
+            return -1;
+    }
+    update(found,yylinenumber);
+    dimit=0;
+}
      | INTEGER | CHAR_CONST
 
 id3 : ID{
@@ -991,24 +998,39 @@ idFor:ID {
 }
 
 print : PRINTF OPEN_BRACK printExpr CLOSE_BRACK SEMICOLON start1 
+printVar: PRINTF OPEN_BRACK printExpr CLOSE_BRACK 
 printExpr : STRING 
        | STRING printArguments
 printArguments : COMMA printContent printArguments
                 | COMMA printContent
-printContent : Exp | arrayElement
+printContent : Exp 
 
 scanf : SCANF OPEN_BRACK scanfExpr CLOSE_BRACK SEMICOLON start1
+scanfVar: SCANF OPEN_BRACK scanfExpr CLOSE_BRACK
 scanfExpr : STRING scanfArguments
-scanfArguments : COMMA AMPERSAND ID scanfArguments
-            | COMMA AMPERSAND ID
+scanfArguments : COMMA AMPERSAND id3 scanfArguments
+            | COMMA AMPERSAND id3
             | COMMA scanfContent scanfArguments
             | COMMA scanfContent
-scanfContent : ID | arrayElement
-
-arrayElement : ID dimension
-dimension : open_sq Exp CLOSE_SQ dimension | open_sq Exp CLOSE_SQ
-
-open_sq : OPEN_SQ{ID_dim++;}
+scanfContent : id3 | ID{
+    dimit = 0;
+    struct SymbolTableEntry * found=lookup($1,scope,false);
+        strcpy(IDBuffer,$1);
+        if(found==NULL){
+            char const errorMessage[100]="Variable Not Declared!!";
+            int a=yyerror(errorMessage);
+            return -1;
+        }
+    } BOX{
+    struct SymbolTableEntry * found=lookup(IDBuffer,scope,false);
+    if(dimit!=found->dimension){
+        char const errorMessage[100]="Dimension does Not match!!";
+            int a=yyerror(errorMessage);
+            return -1;
+    }
+    update(found,yylinenumber);
+    dimit=0;
+}
 
 ID2 : ID {
         struct SymbolTableEntry * found=lookup($1,scope,true);
@@ -1033,10 +1055,27 @@ arrayDeclr : type ID2
             }
         }
     struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;}
-BOX : BOX open_sq integer_dim CLOSE_SQ | open_sq integer_dim CLOSE_SQ
+BOX : BOX OPEN_SQ integer_dim CLOSE_SQ | OPEN_SQ integer_dim CLOSE_SQ
 
 integer_dim : INTEGER {dimbuffer[dimit++] = intval;} | ID {dimbuffer[dimit++] = 10000;}
-arrayInitial : type ID2 BOX EQUALTO open_flower BALANCED_BRACK close_flower SEMICOLON | type ID2 BOX EQUALTO open_flower close_flower SEMICOLON
+arrayInitial : type ID2 BOX EQUALTO open_flower BALANCED_BRACK close_flower SEMICOLON{
+        for(int i=0;i<dimit;i++){
+            if(dimbuffer[i]<=0){
+                char message[25]="Access Denied";
+                int res=yyerror(message);
+                return -1;
+            }
+        }
+    struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;} 
+    | type ID2 BOX EQUALTO open_flower close_flower SEMICOLON{
+        for(int i=0;i<dimit;i++){
+            if(dimbuffer[i]<=0){
+                char message[25]="Access Denied";
+                int res=yyerror(message);
+                return -1;
+            }
+        }
+    struct SymbolTableEntry* temp = insertArray(IDBuffer,CLASS[2],typeBuffer,dimit,yylinenumber,scope,dimbuffer);dimit = 0;}
 BALANCED_BRACK : arrayParams_unend 
             | arrayParams_unend COMMA
             | arrayParams_unend COMMA open_flower BALANCED_BRACK close_flower COMMA BALANCED_BRACK

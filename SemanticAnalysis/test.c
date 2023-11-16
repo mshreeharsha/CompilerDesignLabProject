@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-int a=10;
+int a;
+
 void d(char *s)
 {
     
@@ -8,5 +9,10 @@ void d(char *s)
 
 
 int main(){
-    int a[10]={20};
+    int * ptr = (char *)malloc(sizeof(int));
+    char a[20];
+    int aa[20];
+    char * aaa;
+    int aaaa;
+    scanf("%d",&aa[2][3]);
 }

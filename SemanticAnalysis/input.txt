@@ -1,69 +1,10 @@
-#include <stdio.h>  
-#include <stdlib.h>
-
-int a=10;
-void printArea(int w,int a[3][3][8][7],int ****b){
-    printf("The Value of N is : %d",w);
-}
-
-typedef struct Rectangle {
-    int width;
-    struct Rectangle * next;
-    int height;
-    char ch[10][20];
-}r1,r2;
-
-union Person {
-    char name[50];
-    int age;
-    struct Rectangle address;
-};
-
+#include<stdio.h>
+int c=printf("Hello");
 int main(){
-    a=15;
-    int b=10;
-    b++;
-    int ****ptr=&b;
-    int ****ptr1=&b;
-    printArea(b,ptr,ptr1);
-    //For Loop
-    for(int i=0,j=0;i<a||j<a;i++){
-        for(;;){
-            printf("Hello");
-        }
-    }
-    int a[10][10];
-    int b[10][5]={1,2,36,5};
-    int b[10][5]={1,2,36,{7,},{7,80},90,};
-
-    switch(a){
-        case 'a' : printf("hello");break;
-        default : printf("World");
-    }
-    int * aaa = b;
-    if(a<10){
-        printf("Less Than 10");
-        if(a<10){
-            printf("Between 0 and 2");
-        }
-        else if(a>0 && a<2){
-            printf("Between 0 and 2");
-        }
-        else {
-            printf("Between 0 and 2");
-        }
-    }
-    else if(a>0 && a<2){
-        printf("Between 0 and 2");
-    }
-    else if(a>0 && a<2){
-        printf("Between 0 and 2");
-    }
-    int * ptr = (int *)malloc(sizeof(int));
-
-    int b=10;
-    struct Rectangle rect_ptr={5,b};
-    rect_ptr.width=10;
-    rect_ptr.height=20;
-    rect_ptr->height=20;
+    int b;
+    int a=printf("%d");
+    int aaa[10];
+    int c=aaa[10];
+    b=scanf("%d",aaa[1]);
+    b=printf("%d",aaa[1][20]);
 }
