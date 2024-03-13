@@ -4,7 +4,7 @@ We have implemented the **Lexical Analysis Phase, Syntax Analysis Phase, and Sem
 The tools used for Lexical Analysis is "Flex" and for Syntax Analysis Phase is "Bison".
 
 ## Installation 
-Flex can be installed for _Windows_ using this [link](https://gnuwin32.sourceforge.net/packages/flex.htm).
+Flex can be installed for _Windows_ using this [link](https://gnuwin32.sourceforge.net/packages/flex.htm).\n
 Bison can be installed for _Windows_ using this [link](https://gnuwin32.sourceforge.net/packages/bison.htm).
 
 ## Execution of Code
@@ -17,9 +17,9 @@ gcc lex.yy.c
 ```
 ### Bison
 Yacc file has an extension of 'y'. Execution of .y file generates y.tab.c and y.tab.h
-'''
+```
 bison -dy semanticAnalysis.y
 flex semanticAnalysis.l
 gcc lex.yy.c y.tab.c
 .\a.exe
-'''
+```
