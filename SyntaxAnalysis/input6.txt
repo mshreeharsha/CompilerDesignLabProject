@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int a=10,d,e;
+int b=20;c=10;d=;
+
+void printN(int n,int a[][3][8][7],int ****a){
+    printf("The Value of N is : %d",n);
+}
+int main(){
+    a=15;
+    int b=10;
+    b++;
+}

@@ -1,0 +1,22 @@
+#include <stdio.h>  
+#include "myHeader.h"
+
+typedef struct Employee {
+    int width;
+    struct Employee * r;
+    int * a;
+    char arr[10][20];
+}emp1,emp2;
+
+union Person {
+    char name[50];
+    int age;
+    Address address;
+};
+
+int main(){
+    //For Loop
+    for(int i=0;i<n;i++){
+        printf("Hello World\n");
+    }
+}

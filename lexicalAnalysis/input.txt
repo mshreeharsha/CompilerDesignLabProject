@@ -1,0 +1,8 @@
+#include <stdio.h>
+int main(){
+    int a=5;
+    int b=10;
+    //c is sum of a and b
+    int c=a+b;
+    printf("C is : %d\n",c);
+}

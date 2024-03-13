@@ -1,0 +1,14 @@
+#include <stdio.h>  
+
+int main(){
+
+    //Struct and Union
+
+    struct Aeroplane aero;
+    int b=10;
+    struct Rectangle rect_ptr={5,b};
+    union Rectangle rec={5,b};
+    rect_ptr.a=10;
+    rect_ptr->b=20;
+    rec-c=30;
+}

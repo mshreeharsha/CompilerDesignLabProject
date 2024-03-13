@@ -1,0 +1,11 @@
+#include <stdio.h>  
+
+int main(char ** args){
+
+    //pointer
+
+    int * a = d;
+    int * ptr = (int *)malloc(sizeof(int));
+    struct address *  = &A;
+    void * ptr;
+}

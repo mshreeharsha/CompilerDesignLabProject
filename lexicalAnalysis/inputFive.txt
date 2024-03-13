@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+void printHello(){
+    Code to Print Hello*/
+    printf("Hello World\n");
+}
+
+int main(){
+    printHello();
+    printf("Good Morning);
+    return 0;
+}

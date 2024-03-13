@@ -1,0 +1,11 @@
+#include<stdio.h>
+
+struct a{
+    int x;
+    int s;
+};
+
+int main(){
+    struct b * a1;
+    //a1->x = 10;
+}

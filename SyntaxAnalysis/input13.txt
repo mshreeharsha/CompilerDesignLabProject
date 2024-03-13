@@ -1,0 +1,13 @@
+#include <stdio.h>  
+
+int printvalue(int n){
+    printf("The Value of N : %d\n",n);
+    return 0;
+}
+
+int main(){
+
+    printvalue(5);
+    int d=printValue(b);
+    printValue(10)
+}

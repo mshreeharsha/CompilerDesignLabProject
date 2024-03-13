@@ -1,0 +1,15 @@
+#include <stdio.h>  
+
+int main(char ** args){
+
+    /* Code to 
+    Demonstrate Switch Case to
+    everyone */
+
+    switch(character){
+        case 'a' : printf("hello");break;
+        case 'b' : printf("World");break;
+        case 'c' : printf("NITK");break;
+        default : printf("World");continue;
+    }
+}

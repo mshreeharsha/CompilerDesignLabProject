@@ -1,0 +1,72 @@
+#include <stdio.h>  
+#include <stdlib.h>
+
+int a=10;
+void printN(int n,int a[][3][8][7],int ****a){
+    printf("The Value of N is : %d",n);
+}
+
+typedef struct Rectangle {
+    int width;
+    struct Rectangle * next;
+    int * a;
+    char a[10][20];
+}emp1,emp2;
+
+union Person {
+    char name[50];
+    int age;
+    struct Address address;
+};
+
+int main(char ** args){
+    a=15;
+    int b=10;
+    b++;
+    int d=printN(b);
+    //For Loop
+    for(int i=0,j=0;i<n||j<n;i++){
+        for(;;){
+            printf("Hello");
+        }
+    }
+    int a[10][10];
+    int b[10][5]={1,2,36,5};
+    int b[10][5]={1,2,36,{7,},{7,80},90,};
+
+    switch(a){
+        case 'a' : printf("hello");break;
+        default : printf("World");
+    }
+    /* hello
+
+    everyone */
+    int * a = d;
+
+
+    if(a<10){
+        printf("Less Than 10");
+        if(a<10){
+            printf("Between 0 and 2");
+        }
+        else if(a>0 && a<2){
+            printf("Between 0 and 2");
+        }
+        else {
+            printf("Between 0 and 2");
+        }
+    }
+    else if(a>0 && a<2){
+        printf("Between 0 and 2");
+    }
+    else if(a>0 && a<2){
+        printf("Between 0 and 2");
+    }
+    int * ptr = (int *)malloc(sizeof(int));
+
+    int b=10;
+    struct Rectangle rect_ptr={5,b};
+    struct Rectang rect_ptr={5,b};
+    rect_ptr.a=10;
+    rect_ptr->b=20;
+}

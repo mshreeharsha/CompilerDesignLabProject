@@ -1,0 +1,20 @@
+#include<stdio.h>
+#include<string.h>
+
+int main() {
+    int abc78def=10;
+    int abcdefghijklmnopqrstuvwxyzabcdef;
+    int integer = 2177483647;
+    int d=123#$456;
+    //Defination of For Loop
+    for(int i=-1;i<10;i++){
+        if(i>0 || i==(4^3)){
+            printf("Hello\n");
+        }
+        else{
+            printf("World\n");
+        }
+    }
+    return 1;
+}
+

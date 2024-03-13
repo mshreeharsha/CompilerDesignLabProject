@@ -1,0 +1,19 @@
+
+-------------------------------------------------------------------------------------------------------
+                        Lexeme 	--->	 Token 	                   Line Number
+-------------------------------------------------------------------------------------------------------
+            #include <stdio.h> 	--->	HEADER FILE 	                   1
+                           int 	--->	KEYWORD 	                       2
+                          main 	--->	IDENTIFIER 	                     2
+                             ( 	--->	PARENTHESIS 	                   3
+                             ) 	--->	PARENTHESIS 	                   3
+                             { 	--->	PARENTHESIS 	                   3
+                           int 	--->	KEYWORD 	                       3
+                             a 	--->	IDENTIFIER 	                     3
+                             = 	--->	ASSIGNMENT OPERATOR 	           4
+                            10 	--->	INTERGER CONSTANT 	             3
+                             ; 	--->	SEMICOLON 	                     4
+                        return 	--->	KEYWORD 	                       6
+                             0 	--->	INTERGER CONSTANT 	             6
+                             ; 	--->	SEMICOLON 	                     7
+                             } 	--->	PARENTHESIS 	                   8
