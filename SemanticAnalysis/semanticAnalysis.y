@@ -418,7 +418,7 @@
 %token<type> NULLT TYPE INTEGER STRING FLOATING_NUM CHAR_CONST STRUCT UNION VOID
 %token<value> ID FUN_START
 
-%token INCLUDE PREDEF_HEADER  ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE RETURN  SL_COMMENT ML_COMMENT  EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN COLON DEFAULT MALLOC SIZEOF TYPEDEF DOT ARROW
+%token INCLUDE CONST PREDEF_HEADER  ELIF ELSE IF BREAK NOT FOR CONTINUE WHILE SWITCH CASE RETURN  SL_COMMENT ML_COMMENT  EQUALTO OPEN_BRACK OPEN_FLOWER OPEN_SQ CLOSE_BRACK CLOSE_FLOWER CLOSE_SQ AND UNARY_OP PLUS MINUS DIV MUL MOD OR AMPERSAND BIT_OR BIT_XOR SEMICOLON COMMA ISEQUALTO LT LTE GT GTE NE PLUS_ET MINUS_ET MUL_ET DIV_ET OR_ET AND_ET XOR_ET PRINTF SCANF MAIN COLON DEFAULT MALLOC SIZEOF TYPEDEF DOT ARROW
 
 %right XOR_ET OR_ET AND_ET
 %right PLUS_ET MINUS_ET MUL_ET DIV_ET EQUALTO
@@ -494,7 +494,8 @@ type : TYPE {
             $$=malloc(strlen($1)+1);
             strcpy($$,$1);
         }
-varDec : type id options D SEMICOLON start1 
+varDec : CONST type id options D SEMICOLON start1
+            |type id options D SEMICOLON start1 
          | id3 options D SEMICOLON start1 
          | id3{dimit = 0;} BOX options SEMICOLON {
             struct SymbolTableEntry * entry=lookup(IDBuffer,scope,false);            
@@ -1194,7 +1195,7 @@ uIDi: ID {
 userTypeDeclaration : structInStruct SEMICOLON | ID ID SEMICOLON
 userTypeInitialization : structInStruct EQUALTO open_flower params close_flower SEMICOLON
                         | ID DOT ID {
-                            struct SymbolTableEntry * search=lookup($1,1,true);
+                            struct SymbolTableEntry * search=lookup($1,scope,false);
                             
                             if(search==NULL){
                                 char message[30]="Variable Not Declared";
@@ -1216,7 +1217,7 @@ userTypeInitialization : structInStruct EQUALTO open_flower params close_flower 
                             }
                         } EQUALTO item SEMICOLON
                         | ID ARROW ID{
-                            struct SymbolTableEntry * search=lookup($1,1,true);
+                            struct SymbolTableEntry * search=lookup($1,scope,false);
                             
                             if(search==NULL){
                                 char message[30]="Variable Not Declared";

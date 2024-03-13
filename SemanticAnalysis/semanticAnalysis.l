@@ -16,6 +16,7 @@ else {return ELSE;}
 break {return BREAK;}
 continue {return CONTINUE;}
 default {return DEFAULT;}
+const {return CONST;}
 void {return VOID;}
 for {return FOR;}
 while {return WHILE;}

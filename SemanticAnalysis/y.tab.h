@@ -51,63 +51,64 @@
      ID = 267,
      FUN_START = 268,
      INCLUDE = 269,
-     PREDEF_HEADER = 270,
-     ELIF = 271,
-     ELSE = 272,
-     IF = 273,
-     BREAK = 274,
-     NOT = 275,
-     FOR = 276,
-     CONTINUE = 277,
-     WHILE = 278,
-     SWITCH = 279,
-     CASE = 280,
-     RETURN = 281,
-     SL_COMMENT = 282,
-     ML_COMMENT = 283,
-     EQUALTO = 284,
-     OPEN_BRACK = 285,
-     OPEN_FLOWER = 286,
-     OPEN_SQ = 287,
-     CLOSE_BRACK = 288,
-     CLOSE_FLOWER = 289,
-     CLOSE_SQ = 290,
-     AND = 291,
-     UNARY_OP = 292,
-     PLUS = 293,
-     MINUS = 294,
-     DIV = 295,
-     MUL = 296,
-     MOD = 297,
-     OR = 298,
-     AMPERSAND = 299,
-     BIT_OR = 300,
-     BIT_XOR = 301,
-     SEMICOLON = 302,
-     COMMA = 303,
-     ISEQUALTO = 304,
-     LT = 305,
-     LTE = 306,
-     GT = 307,
-     GTE = 308,
-     NE = 309,
-     PLUS_ET = 310,
-     MINUS_ET = 311,
-     MUL_ET = 312,
-     DIV_ET = 313,
-     OR_ET = 314,
-     AND_ET = 315,
-     XOR_ET = 316,
-     PRINTF = 317,
-     SCANF = 318,
-     MAIN = 319,
-     COLON = 320,
-     DEFAULT = 321,
-     MALLOC = 322,
-     SIZEOF = 323,
-     TYPEDEF = 324,
-     DOT = 325,
-     ARROW = 326
+     CONST = 270,
+     PREDEF_HEADER = 271,
+     ELIF = 272,
+     ELSE = 273,
+     IF = 274,
+     BREAK = 275,
+     NOT = 276,
+     FOR = 277,
+     CONTINUE = 278,
+     WHILE = 279,
+     SWITCH = 280,
+     CASE = 281,
+     RETURN = 282,
+     SL_COMMENT = 283,
+     ML_COMMENT = 284,
+     EQUALTO = 285,
+     OPEN_BRACK = 286,
+     OPEN_FLOWER = 287,
+     OPEN_SQ = 288,
+     CLOSE_BRACK = 289,
+     CLOSE_FLOWER = 290,
+     CLOSE_SQ = 291,
+     AND = 292,
+     UNARY_OP = 293,
+     PLUS = 294,
+     MINUS = 295,
+     DIV = 296,
+     MUL = 297,
+     MOD = 298,
+     OR = 299,
+     AMPERSAND = 300,
+     BIT_OR = 301,
+     BIT_XOR = 302,
+     SEMICOLON = 303,
+     COMMA = 304,
+     ISEQUALTO = 305,
+     LT = 306,
+     LTE = 307,
+     GT = 308,
+     GTE = 309,
+     NE = 310,
+     PLUS_ET = 311,
+     MINUS_ET = 312,
+     MUL_ET = 313,
+     DIV_ET = 314,
+     OR_ET = 315,
+     AND_ET = 316,
+     XOR_ET = 317,
+     PRINTF = 318,
+     SCANF = 319,
+     MAIN = 320,
+     COLON = 321,
+     DEFAULT = 322,
+     MALLOC = 323,
+     SIZEOF = 324,
+     TYPEDEF = 325,
+     DOT = 326,
+     ARROW = 327
    };
 #endif
 /* Tokens.  */
@@ -123,63 +124,64 @@
 #define ID 267
 #define FUN_START 268
 #define INCLUDE 269
-#define PREDEF_HEADER 270
-#define ELIF 271
-#define ELSE 272
-#define IF 273
-#define BREAK 274
-#define NOT 275
-#define FOR 276
-#define CONTINUE 277
-#define WHILE 278
-#define SWITCH 279
-#define CASE 280
-#define RETURN 281
-#define SL_COMMENT 282
-#define ML_COMMENT 283
-#define EQUALTO 284
-#define OPEN_BRACK 285
-#define OPEN_FLOWER 286
-#define OPEN_SQ 287
-#define CLOSE_BRACK 288
-#define CLOSE_FLOWER 289
-#define CLOSE_SQ 290
-#define AND 291
-#define UNARY_OP 292
-#define PLUS 293
-#define MINUS 294
-#define DIV 295
-#define MUL 296
-#define MOD 297
-#define OR 298
-#define AMPERSAND 299
-#define BIT_OR 300
-#define BIT_XOR 301
-#define SEMICOLON 302
-#define COMMA 303
-#define ISEQUALTO 304
-#define LT 305
-#define LTE 306
-#define GT 307
-#define GTE 308
-#define NE 309
-#define PLUS_ET 310
-#define MINUS_ET 311
-#define MUL_ET 312
-#define DIV_ET 313
-#define OR_ET 314
-#define AND_ET 315
-#define XOR_ET 316
-#define PRINTF 317
-#define SCANF 318
-#define MAIN 319
-#define COLON 320
-#define DEFAULT 321
-#define MALLOC 322
-#define SIZEOF 323
-#define TYPEDEF 324
-#define DOT 325
-#define ARROW 326
+#define CONST 270
+#define PREDEF_HEADER 271
+#define ELIF 272
+#define ELSE 273
+#define IF 274
+#define BREAK 275
+#define NOT 276
+#define FOR 277
+#define CONTINUE 278
+#define WHILE 279
+#define SWITCH 280
+#define CASE 281
+#define RETURN 282
+#define SL_COMMENT 283
+#define ML_COMMENT 284
+#define EQUALTO 285
+#define OPEN_BRACK 286
+#define OPEN_FLOWER 287
+#define OPEN_SQ 288
+#define CLOSE_BRACK 289
+#define CLOSE_FLOWER 290
+#define CLOSE_SQ 291
+#define AND 292
+#define UNARY_OP 293
+#define PLUS 294
+#define MINUS 295
+#define DIV 296
+#define MUL 297
+#define MOD 298
+#define OR 299
+#define AMPERSAND 300
+#define BIT_OR 301
+#define BIT_XOR 302
+#define SEMICOLON 303
+#define COMMA 304
+#define ISEQUALTO 305
+#define LT 306
+#define LTE 307
+#define GT 308
+#define GTE 309
+#define NE 310
+#define PLUS_ET 311
+#define MINUS_ET 312
+#define MUL_ET 313
+#define DIV_ET 314
+#define OR_ET 315
+#define AND_ET 316
+#define XOR_ET 317
+#define PRINTF 318
+#define SCANF 319
+#define MAIN 320
+#define COLON 321
+#define DEFAULT 322
+#define MALLOC 323
+#define SIZEOF 324
+#define TYPEDEF 325
+#define DOT 326
+#define ARROW 327
 
 
 
@@ -197,7 +199,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 201 "y.tab.h"
+#line 203 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

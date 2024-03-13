@@ -1,10 +1,11 @@
 #include<stdio.h>
-int c=printf("Hello");
+
+struct a{
+    int x;
+    int s;
+};
+
 int main(){
-    int b;
-    int a=printf("%d");
-    int aaa[10];
-    int c=aaa[10];
-    b=scanf("%d",aaa[1]);
-    b=printf("%d",aaa[1][20]);
+    struct b * a1;
+    //a1->x = 10;
 }
