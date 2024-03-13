@@ -4,7 +4,8 @@ We have implemented the **Lexical Analysis Phase, Syntax Analysis Phase, and Sem
 The tools used for Lexical Analysis is "Flex" and for Syntax Analysis Phase is "Bison".
 
 ## Installation 
-Flex can be installed for _Windows_ using this [link](https://gnuwin32.sourceforge.net/packages/flex.htm).\n
+Flex can be installed for _Windows_ using this [link](https://gnuwin32.sourceforge.net/packages/flex.htm).
+
 Bison can be installed for _Windows_ using this [link](https://gnuwin32.sourceforge.net/packages/bison.htm).
 
 ## Execution of Code
